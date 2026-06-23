@@ -1,0 +1,1095 @@
+/* ==========================================================================
+   PORTFOLIO V2 — UNIFIED DESIGN SYSTEM & STYLING
+   ========================================================================== */
+
+/* Reset & Base Styles */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: auto; /* Required for Lenis smooth scroll */
+    background-color: #05070a;
+    color: #ffffff;
+    font-family: 'Outfit', sans-serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    width: 100%;
+    background-color: #05070a;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Hide default scrollbar for complete visual immersion */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #05070a;
+}
+::-webkit-scrollbar-thumb {
+    background: #121824;
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #1c2536;
+}
+
+/* ==========================================================================
+   PREMIUM LUXURY PRELOADER (Unified loader)
+   ========================================================================== */
+.loader-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #05070a;
+    z-index: 99999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.8s cubic-bezier(0.85, 0, 0.15, 1), visibility 0.8s cubic-bezier(0.85, 0, 0.15, 1);
+}
+
+.loader-screen.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    max-width: 90%;
+    text-align: center;
+}
+
+.loader-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.4em;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+}
+
+.loader-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 300;
+    letter-spacing: 0.25em;
+    color: #ffffff;
+    text-transform: uppercase;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+    animation: titlePulse 2s ease-in-out infinite;
+}
+
+.loader-bar-container {
+    width: 180px;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.08);
+    position: relative;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+#loader-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background-color: #ffffff;
+    transition: width 0.1s ease;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+#loader-status {
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    margin-top: 5px;
+}
+
+#loader-percentage {
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.loader-spinner {
+    width: 30px;
+    height: 30px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-top-color: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    margin-bottom: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes titlePulse {
+    0%, 100% { opacity: 0.8; letter-spacing: 0.25em; }
+    50% { opacity: 1; letter-spacing: 0.27em; }
+}
+
+
+/* ==========================================================================
+   SCROLL WRAPPER & CINEMATIC SECTION STRUCTURE
+   ========================================================================== */
+#scroll-wrapper {
+    width: 100%;
+    position: relative;
+}
+
+.cinematic-section {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #05070a;
+}
+
+.canvas-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background-color: #05070a;
+}
+
+.canvas-container canvas {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+
+/* ==========================================================================
+   SECTION 1 — CLEAN PORTRAIT HERO PAGE WITH TEXT OVERLAYS
+   ========================================================================== */
+#hero-section {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #050505;
+    overflow: hidden;
+}
+
+.hero-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    z-index: 10;
+}
+
+.hero-section-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(5, 5, 5, 0.1) 0%, rgba(5, 5, 5, 0.85) 100%);
+    z-index: 12;
+    pointer-events: none;
+}
+
+/* Luxury Editorial Typography Overlays */
+.hero-content-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 15;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 60px;
+    pointer-events: none;
+}
+
+.hero-header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: fadeSlideDown 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 2.0s;
+}
+
+.hero-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: #ffffff;
+}
+
+.hero-tagline {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    margin-top: 10px;
+}
+
+.hero-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+}
+
+.hero-contact {
+    text-align: left;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    line-height: 2.0;
+    color: rgba(255, 255, 255, 0.5);
+    pointer-events: auto; /* enable links */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeSlideUp 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 2.2s;
+}
+
+.hero-contact a {
+    color: #ffffff;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.hero-contact a:hover {
+    border-bottom-color: #ffffff;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.hero-title-group {
+    text-align: right;
+    max-width: 750px;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeSlideUp 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 1.8s;
+}
+
+.hero-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    color: #ffffff;
+    line-height: 1.1;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    text-shadow: 0 0 50px rgba(255, 255, 255, 0.15);
+}
+
+@media (min-width: 768px) {
+    .hero-name {
+        font-size: 5rem;
+    }
+}
+
+.hero-subtitle {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    line-height: 1.4;
+}
+
+@keyframes fadeSlideUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeSlideDown {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ==========================================================================
+   SECTION 2 — ABOUT CINEMATIC SPLIT PAGE (50/50 Layout)
+   ========================================================================== */
+#about-hero-section {
+    font-family: 'Outfit', sans-serif;
+    background-color: #05070a;
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.about-split-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Left half holds pinned canvas */
+.about-left-col {
+    width: 50%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    border-right: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.about-left-col .canvas-container {
+    width: 100%;
+    height: 100%;
+}
+
+.about-left-col .canvas-container canvas {
+    /* Scale specifically for the half screen */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Right half holds scrolling text */
+.about-right-col {
+    width: 50%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.about-text-scrub-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    padding: 100px 80px;
+    gap: 35px;
+    max-width: 650px;
+}
+
+.about-scrub-line {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.65);
+    opacity: 0.2; /* start dimmed */
+    transition: opacity 0.1s ease;
+    margin-bottom: 20px;
+}
+
+@media (min-width: 992px) {
+    .about-scrub-line {
+        font-size: 0.95rem;
+    }
+}
+
+/* Details Section (skills, timeline, etc.) */
+#about-details-section {
+    width: 100%;
+    background-color: #05070a;
+    padding: 120px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.about-details-wrap {
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+}
+
+/* Content Typography & Components */
+.about-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.about-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.6rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    color: #ffffff;
+    text-transform: uppercase;
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 15px;
+}
+
+.about-desc {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+/* Skill Tags Styles */
+.about-skills-subsection {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.skill-category-title {
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+}
+
+.skill-tag-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.skill-tag {
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 20px;
+    color: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s ease;
+}
+
+.skill-tag:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* Timeline Cards */
+.timeline-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.timeline-card {
+    position: relative;
+    padding: 28px;
+    background: rgba(255, 255, 255, 0.01);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.timeline-card:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.timeline-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #ffffff;
+}
+
+.timeline-company {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 0.05em;
+}
+
+.timeline-date {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.05em;
+}
+
+.timeline-bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.timeline-bullets li {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.55);
+    position: relative;
+    padding-left: 18px;
+}
+
+.timeline-bullets li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: rgba(255, 255, 255, 0.25);
+}
+
+
+/* ==========================================================================
+   EDUCATION & LEADERSHIP STYLES
+   ========================================================================== */
+:root {
+  --text-muted: #888888;
+  --card-bg: #0d0d0d;
+  --card-border: #1a1a1a;
+  --divider-color: #1a1a1a;
+}
+
+.about-block {
+  margin-bottom: clamp(2.5rem, 5vh, 4rem);
+  width: 100%;
+}
+
+.about-block-title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--divider-color);
+}
+
+/* Timeline Layout */
+.edu-timeline {
+  position: relative;
+  padding-left: 1.5rem;
+  border-left: 1px solid var(--divider-color);
+}
+
+.edu-item {
+  position: relative;
+  margin-bottom: 1.5rem;
+  padding-left: 1rem;
+}
+
+/* Timeline bullet points */
+.edu-item::before {
+  content: '';
+  position: absolute;
+  left: -1.85rem;
+  top: 0.45rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.edu-degree {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+  color: #ffffff;
+}
+
+.edu-school {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 300;
+  margin-top: 2px;
+}
+
+.edu-score {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 0.2rem;
+  font-weight: 400;
+}
+
+/* Card Layout */
+.leadership-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.leadership-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: clamp(1.2rem, 2vw, 1.6rem);
+  transition: all 0.3s ease;
+}
+
+.leadership-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.leadership-title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.leadership-org {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.leadership-desc {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+
+/* ==========================================================================
+   SECTION 3 — PROJECTS CINEMATIC SCROLL WITH CAROUSEL PLACEHOLDERS
+   ========================================================================== */
+.projects-section {
+    font-family: 'Inter', sans-serif;
+    background-color: #05070a;
+}
+
+.projects-section .canvas-container canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Positioned starting from chest level of background portrait */
+.projects-content-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 15;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Push to center/bottom */
+    padding-bottom: 6vh;
+    pointer-events: none;
+}
+
+.projects-header-overlay {
+    padding: 0 80px;
+    margin-bottom: 3vh;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 1s ease;
+}
+
+.projects-header-overlay.in-view {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.projects-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.projects-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+/* Card Stacks Container & Columns */
+.carousel-container-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.projects-stacks-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
+    width: 100%;
+    max-width: 1100px;
+    margin: 40px auto 0 auto;
+    padding: 0 80px;
+    pointer-events: auto;
+}
+
+.projects-stack-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 380px;
+}
+
+.stack-category-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    color: rgba(255, 255, 255, 0.85);
+    text-transform: uppercase;
+    margin-bottom: 25px;
+    border-left: 2px solid #ffffff;
+    padding-left: 12px;
+    align-self: flex-start;
+}
+
+.card-stack {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    margin-bottom: 30px;
+    perspective: 1000px;
+}
+
+.cards-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.project-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 15, 24, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+}
+
+.project-card:active {
+    cursor: grabbing;
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.card-number {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.card-body {
+    margin-top: 15px;
+    flex-grow: 1;
+}
+
+.card-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 500;
+    color: #ffffff;
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+}
+
+.card-desc {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 300;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 15px;
+}
+
+.card-tech {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 400;
+}
+
+.card-action-link {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #ffffff;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    padding-bottom: 2px;
+}
+
+.card-action-link:hover {
+    border-bottom-color: #ffffff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.card-action-disabled {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.25);
+    cursor: default;
+}
+
+/* Dots Navigation */
+.stack-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.stack-dots .dot {
+    width: 6px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.stack-dots .dot:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.stack-dots .dot.active {
+    width: 18px;
+    border-radius: 4px;
+    background: #ffffff;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+/* Responsive Styles for Card Stacks */
+@media (max-width: 768px) {
+    .projects-stacks-container {
+        flex-direction: column;
+        gap: 50px;
+        padding: 0 40px;
+        margin-top: 20px;
+    }
+    
+    .projects-stack-column {
+        max-width: 100%;
+    }
+    
+    .card-stack {
+        height: 230px;
+    }
+    
+    .projects-header-overlay {
+        padding: 0 40px;
+    }
+}
+
+
+
+/* ==========================================================================
+   LENIS SMOOTH SCROLL INTEGRATION STYLES
+   ========================================================================== */
+html.lenis, html.lenis body {
+    height: auto;
+}
+
+.lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+    overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+    pointer-events: none;
+}
+
+
+/* ==========================================================================
+   SECTION 4 — REACH ME CONTACT FOOTER
+   ========================================================================== */
+#reach-me-section {
+    width: 100%;
+    min-height: 50vh;
+    background-color: #050505;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    position: relative;
+    z-index: 20;
+}
+
+.reach-me-content {
+    text-align: center;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.reach-me-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+.reach-me-subtitle {
+    font-size: 0.85rem;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+.contact-links-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 70px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.6);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    text-decoration: none;
+}
+
+.contact-item svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.contact-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    transform: translateY(-5px);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
+}
+
+.contact-item:hover svg {
+    transform: scale(1.15);
+}
+
+.reach-me-footer-text {
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.25);
+    margin-top: 50px;
+    text-transform: uppercase;
+}
