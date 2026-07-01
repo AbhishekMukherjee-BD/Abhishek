@@ -1168,3 +1168,113 @@ html.lenis, html.lenis body {
     margin-top: 50px;
     text-transform: uppercase;
 }
+
+/* ==========================================================================
+   MOBILE VIEWS OPTIMIZATION (DO NOT AFFECT PC LIBRARIES)
+   ========================================================================== */
+
+/* Tablet & Phone Views (max-width: 768px) */
+@media (max-width: 768px) {
+    /* --- HERO SECTION MOBILE --- */
+    .hero-content-overlay {
+        padding: 24px 20px;
+    }
+
+    .hero-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .hero-tagline {
+        font-size: 0.65rem;
+        letter-spacing: 0.25em;
+        text-align: center;
+        margin-top: 5px;
+    }
+
+    .hero-footer {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 20px;
+        width: 100%;
+    }
+
+    .hero-contact {
+        text-align: center;
+        font-size: 0.75rem;
+        line-height: 1.8;
+        order: 2; /* Sits below the name/title */
+    }
+
+    .hero-title-group {
+        text-align: center;
+        max-width: 100%;
+        order: 1; /* Sits above contact details */
+    }
+
+    .hero-name {
+        font-size: 2.6rem;
+        letter-spacing: 0.03em;
+        margin-bottom: 8px;
+    }
+
+    .hero-subtitle {
+        font-size: 0.72rem;
+        letter-spacing: 0.18em;
+        line-height: 1.5;
+        display: block;
+    }
+
+    /* Restrict SVG height on mobile to prevent overlap with top/bottom text */
+    #hero-container svg {
+        max-height: 52vh !important;
+        max-width: 85vw !important;
+    }
+
+    /* --- ABOUT SECTION MOBILE (Vertical Stack) --- */
+    .about-split-container {
+        flex-direction: column;
+    }
+    
+    .about-left-col {
+        width: 100%;
+        height: 45vh;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    
+    .about-right-col {
+        width: 100%;
+        height: 55vh;
+    }
+    
+    .about-text-scrub-container {
+        padding: 30px 24px;
+        gap: 15px;
+        max-width: 100%;
+    }
+    
+    .about-scrub-line {
+        font-size: 0.85rem;
+        line-height: 1.6;
+        margin-bottom: 10px;
+    }
+    
+    .about-title {
+        font-size: 1.8rem;
+        margin-bottom: 5px;
+    }
+}
+
+/* Small Screens (max-width: 480px) */
+@media (max-width: 480px) {
+    .hero-name {
+        font-size: 2.1rem;
+    }
+    
+    .reach-me-title {
+        font-size: 2.2rem;
+    }
+}
