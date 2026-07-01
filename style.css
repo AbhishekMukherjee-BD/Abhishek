@@ -839,6 +839,35 @@ body {
     transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
                 background-size 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
                 box-shadow 0.4s ease;
+    overflow: hidden;
+}
+
+.project-card > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* Dynamic Card Background & Overlay */
+.project-card.has-bg {
+    background: var(--card-img) no-repeat center center;
+    background-size: cover;
+}
+
+.project-card.has-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 15, 24, 0.75);
+    z-index: 1;
+    transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    pointer-events: none;
+}
+
+.project-card.has-bg:hover::before {
+    opacity: 0.12; /* Overlay opacity drops to 12% (image is 88% prominent, satisfying 'above 85%') */
 }
 
 .project-card:active {

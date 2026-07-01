@@ -599,9 +599,9 @@ async function fetchAndRenderDynamicProjects() {
             card.className = 'project-card';
             card.setAttribute('data-index', index);
             
-            // Set style for card background image with a dark linear gradient overlay for contrast
-            card.style.background = `linear-gradient(rgba(10, 15, 24, 0.75), rgba(10, 15, 24, 0.75)), url('${project.image_url}') no-repeat center center`;
-            card.style.backgroundSize = 'cover';
+            // Set class and CSS variable for custom background image and overlay opacity transition
+            card.classList.add('has-bg');
+            card.style.setProperty('--card-img', `url('${project.image_url}')`);
 
             card.innerHTML = `
                 <div class="card-top">
