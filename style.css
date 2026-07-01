@@ -867,7 +867,7 @@ body {
 }
 
 .project-card.has-bg:hover::before {
-    opacity: 0.12; /* Overlay opacity drops to 12% (image is 88% prominent, satisfying 'above 85%') */
+    opacity: 0; /* Overlay becomes fully transparent, making the image 100% prominent */
 }
 
 .project-card:active {
