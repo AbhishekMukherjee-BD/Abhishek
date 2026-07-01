@@ -1,3 +1,14 @@
+// --- SUPABASE API CONFIGURATION ---
+const SUPABASE_URL = "https://bdmwjwwyhkbocjdxunsu.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJkbXdqd3d5aGtib2NqZHh1bnN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5MDY3NDksImV4cCI6MjA5ODQ4Mjc0OX0.SGH_lwtKPx_vDM9FB6bkOxIEDEoSEhS5glCcUum9LMU";
+let supabaseClient = null;
+
+if (typeof supabase !== 'undefined') {
+    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+} else {
+    console.warn("Supabase SDK is not loaded. Falling back to static project cards.");
+}
+
 // Register ScrollTrigger with GSAP
 gsap.registerPlugin(ScrollTrigger);
 
@@ -544,8 +555,94 @@ class CardStack {
     }
 }
 
-// Start loading assets
-preloadAllImages().then(() => {
+// Async function to fetch projects from Supabase and render them dynamically in the DOM
+async function fetchAndRenderDynamicProjects() {
+    if (!supabaseClient) return;
+
+    const { data: projects, error } = await supabaseClient
+        .from('projects')
+        .select('*')
+        .order('created_at', { ascending: true });
+
+    if (error) {
+        console.error("Error fetching projects from Supabase:", error);
+        return;
+    }
+
+    if (!projects || projects.length === 0) {
+        console.log("No projects found in Supabase. Using static fallback cards.");
+        return;
+    }
+
+    // Filter projects by category
+    const webdevProjects = projects.filter(p => p.category === 'webdev');
+    const n8nProjects = projects.filter(p => p.category === 'n8n');
+
+    // Helper function to render a dynamic card stack
+    const renderStack = (containerId, categoryProjects, badgeText) => {
+        const container = document.getElementById(containerId);
+        if (!container || categoryProjects.length === 0) return;
+
+        const wrapper = container.querySelector('.cards-wrapper');
+        const dotsContainer = container.querySelector('.stack-dots');
+        if (!wrapper || !dotsContainer) return;
+
+        // Clear existing static fallback elements
+        wrapper.innerHTML = '';
+        dotsContainer.innerHTML = '';
+
+        const total = categoryProjects.length;
+
+        categoryProjects.forEach((project, index) => {
+            const numStr = `${String(index + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
+            const card = document.createElement('div');
+            card.className = 'project-card';
+            card.setAttribute('data-index', index);
+            
+            // Set style for card background image with a dark linear gradient overlay for contrast
+            card.style.background = `linear-gradient(rgba(10, 15, 24, 0.75), rgba(10, 15, 24, 0.75)), url('${project.image_url}') no-repeat center center`;
+            card.style.backgroundSize = 'cover';
+
+            card.innerHTML = `
+                <div class="card-top">
+                    <span class="card-badge">${badgeText}</span>
+                    <span class="card-number">${numStr}</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">${project.title}</h3>
+                    <p class="card-desc">${project.description}</p>
+                </div>
+                <div class="card-footer">
+                    <span class="card-tech">${project.tech_stack}</span>
+                    ${project.project_url 
+                        ? `<a href="${project.project_url}" target="_blank" class="card-action-link">Live Site &rarr;</a>` 
+                        : `<span class="card-action-disabled">Demo Only</span>`}
+                </div>
+            `;
+            wrapper.appendChild(card);
+
+            // Add navigation dot
+            const dot = document.createElement('span');
+            dot.className = `dot ${index === 0 ? 'active' : ''}`;
+            dot.setAttribute('data-index', index);
+            dotsContainer.appendChild(dot);
+        });
+    };
+
+    // Render Web Dev Stack
+    renderStack('webdev-stack', webdevProjects, 'Web Dev');
+
+    // Render AI Automations Stack
+    renderStack('aiautomations-stack', n8nProjects, 'AI Automation');
+}
+
+// Start loading assets and fetch projects in parallel
+preloadAllImages().then(async () => {
+    try {
+        await fetchAndRenderDynamicProjects();
+    } catch (e) {
+        console.error("Failed to load dynamic projects:", e);
+    }
     window.assetsLoaded = true;
     window.checkExperienceReady();
 });
