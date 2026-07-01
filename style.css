@@ -836,6 +836,9 @@ body {
     cursor: grab;
     user-select: none;
     touch-action: none;
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
+                background-size 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
+                box-shadow 0.4s ease;
 }
 
 .project-card:active {
@@ -923,6 +926,40 @@ body {
     font-weight: 400;
     color: rgba(255, 255, 255, 0.25);
     cursor: default;
+}
+
+/* Project Card Content Transitions */
+.card-top, .card-body, .card-footer, .card-tech {
+    transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
+                transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Project Card Hover Zoom and Selective Text Fading */
+.project-card:hover {
+    transform: scale(1.05) translateY(-5px) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    background-size: 115% !important;
+}
+
+.project-card:hover .card-top,
+.project-card:hover .card-body {
+    opacity: 0.05;
+    transform: translateY(-4px);
+    pointer-events: none;
+}
+
+.project-card:hover .card-footer {
+    opacity: 0.9;
+}
+
+.project-card:hover .card-footer .card-tech {
+    opacity: 0.08;
+    transform: translateY(-2px);
+}
+
+.project-card:hover .card-footer .card-action-link {
+    opacity: 1;
+    transform: scale(1.03);
 }
 
 /* Dots Navigation */

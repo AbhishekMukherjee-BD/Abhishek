@@ -301,8 +301,8 @@ function initScrollAnimations() {
     });
 
     // Initialize Card Stacks for Projects Section
-    new CardStack('webdev-stack', 5000);
-    new CardStack('aiautomations-stack', 5000);
+    new CardStack('webdev-stack', 3000);
+    new CardStack('aiautomations-stack', 3000);
 }
 
 // Reusable vanilla JS & GSAP Card Stack component (Aceternity UI inspired)
