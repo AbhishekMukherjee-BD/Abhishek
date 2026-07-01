@@ -991,32 +991,41 @@ body {
     transform: scale(1.03);
 }
 
-/* Dots Navigation */
-.stack-dots {
+/* Slider Navigation */
+.stack-slider {
+    width: 100%;
+    padding: 10px 0;
+    margin-top: 15px;
     display: flex;
     justify-content: center;
-    gap: 8px;
-    margin-top: 10px;
-}
-
-.stack-dots .dot {
-    width: 6px;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
     cursor: pointer;
-    transition: all 0.3s ease;
 }
 
-.stack-dots .dot:hover {
-    background: rgba(255, 255, 255, 0.5);
+.slider-track {
+    position: relative;
+    width: 100%;
+    max-width: 240px; /* Symmetrical, sits nicely under the card */
+    height: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    overflow: hidden;
 }
 
-.stack-dots .dot.active {
-    width: 18px;
-    border-radius: 4px;
+.slider-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 25%; /* Set dynamically in JS */
     background: #ffffff;
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    border-radius: 2px;
+    transition: background 0.3s ease;
+}
+
+.stack-slider:hover .slider-track {
+    background: rgba(255, 255, 255, 0.15);
 }
 
 /* Responsive Styles for Card Stacks */

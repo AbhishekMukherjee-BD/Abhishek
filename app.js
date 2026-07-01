@@ -313,10 +313,15 @@ class CardStack {
         
         this.cardsWrapper = this.container.querySelector('.cards-wrapper');
         this.cards = Array.from(this.cardsWrapper.querySelectorAll('.project-card'));
-        this.dots = Array.from(this.container.querySelectorAll('.dot'));
         this.totalCards = this.cards.length;
+        
+        this.slider = this.container.querySelector('.stack-slider');
+        this.sliderTrack = this.container.querySelector('.slider-track');
+        this.sliderThumb = this.container.querySelector('.slider-thumb');
+        
         this.currentIndex = 0;
         this.isDragging = false;
+        this.isSliderDragging = false;
         this.startX = 0;
         this.startY = 0;
         this.currentX = 0;
@@ -335,16 +340,49 @@ class CardStack {
         // Bind drag & swipe events
         this.bindEvents();
         
+        // Bind slider events
+        this.bindSliderEvents();
+        
         // Start auto rotation
         this.startAutoplay();
-        
-        // Bind navigation dots
-        this.dots.forEach((dot, idx) => {
-            dot.addEventListener('click', () => {
+    }
+    
+    bindSliderEvents() {
+        if (!this.sliderTrack || !this.sliderThumb) return;
+
+        const handleSliderInteraction = (clientX) => {
+            const rect = this.sliderTrack.getBoundingClientRect();
+            const relativeX = clientX - rect.left;
+            const percentage = Math.min(Math.max(relativeX / rect.width, 0), 0.999);
+            const targetIndex = Math.floor(percentage * this.totalCards);
+            
+            if (targetIndex !== this.currentIndex) {
                 this.stopAutoplay();
-                this.goToIndex(idx);
+                this.goToIndex(targetIndex);
                 this.startAutoplay();
-            });
+            }
+        };
+
+        // Pointer down listener for track clicking and dragging
+        this.sliderTrack.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            this.isSliderDragging = true;
+            handleSliderInteraction(e.clientX);
+            
+            const onPointerMove = (moveEvent) => {
+                if (this.isSliderDragging) {
+                    handleSliderInteraction(moveEvent.clientX);
+                }
+            };
+            
+            const onPointerUp = () => {
+                this.isSliderDragging = false;
+                document.removeEventListener('pointermove', onPointerMove);
+                document.removeEventListener('pointerup', onPointerUp);
+            };
+            
+            document.addEventListener('pointermove', onPointerMove);
+            document.addEventListener('pointerup', onPointerUp);
         });
     }
     
@@ -407,14 +445,18 @@ class CardStack {
             }
         });
         
-        // Update dots state
-        this.dots.forEach((dot, idx) => {
-            if (idx === this.currentIndex) {
-                dot.classList.add('active');
-            } else {
-                dot.classList.remove('active');
-            }
-        });
+        // Update slider thumb position and size
+        if (this.sliderThumb && this.totalCards > 0) {
+            const thumbWidthPct = 100 / this.totalCards;
+            const leftPct = this.currentIndex * thumbWidthPct;
+            
+            gsap.to(this.sliderThumb, {
+                width: `${thumbWidthPct}%`,
+                left: `${leftPct}%`,
+                duration: 0.45,
+                ease: 'power2.out'
+            });
+        }
     }
     
     bindEvents() {
@@ -584,12 +626,10 @@ async function fetchAndRenderDynamicProjects() {
         if (!container || categoryProjects.length === 0) return;
 
         const wrapper = container.querySelector('.cards-wrapper');
-        const dotsContainer = container.querySelector('.stack-dots');
-        if (!wrapper || !dotsContainer) return;
+        if (!wrapper) return;
 
         // Clear existing static fallback elements
         wrapper.innerHTML = '';
-        dotsContainer.innerHTML = '';
 
         const total = categoryProjects.length;
 
@@ -620,12 +660,6 @@ async function fetchAndRenderDynamicProjects() {
                 </div>
             `;
             wrapper.appendChild(card);
-
-            // Add navigation dot
-            const dot = document.createElement('span');
-            dot.className = `dot ${index === 0 ? 'active' : ''}`;
-            dot.setAttribute('data-index', index);
-            dotsContainer.appendChild(dot);
         });
     };
 
