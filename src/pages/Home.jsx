@@ -254,20 +254,20 @@ function Home() {
       },
     });
 
-    // Image zoom: smoothly zoom white container from 0.72 up to 1.0 and corners from 36px to 0px
+    // Image zoom: smoothly zoom white container from 0.88 up to 0.985 as photo approaches center screen
     gsap.fromTo(
       scalerRef.current,
       {
-        scale: 0.72,
-        borderRadius: "36px",
+        scale: 0.88,
+        borderRadius: "28px",
       },
       {
-        scale: 1,
-        borderRadius: "0px",
-        ease: "none",
+        scale: 0.985,
+        borderRadius: "14px",
+        ease: "power1.out",
         scrollTrigger: {
-          trigger: ".photo-text-section",
-          start: "top 85%",
+          trigger: scalerRef2.current || ".photo-text-section",
+          start: "top 95%",
           end: "center center",
           scrub: 1.2,
           invalidateOnRefresh: true,
@@ -275,20 +275,20 @@ function Home() {
       }
     );
 
-    // Inner photo zoom: smoothly expand portrait image from 0.50 up to 1.0 in tandem
+    // Inner photo zoom: expands smoothly from 0.84 to 0.985 right as photo reaches viewport center
     gsap.fromTo(
       scalerRef2.current,
       {
-        scale: 0.50,
+        scale: 0.84,
       },
       {
-        scale: 1,
-        ease: "none",
+        scale: 0.985,
+        ease: "power1.out",
         scrollTrigger: {
-          trigger: ".photo-text-section",
-          start: "top 85%",
-          end: "75% center",
-          scrub: 1.5,
+          trigger: scalerRef2.current || ".photo-text-section",
+          start: "top 95%",
+          end: "center center",
+          scrub: 1.2,
           invalidateOnRefresh: true,
         },
       }
@@ -826,7 +826,7 @@ function Home() {
               <img
                 src={pimage}
                 ref={scalerRef2}
-                className="w-full px-4 sm:px-8 md:px-16 lg:px-20 py-6 md:py-8"
+                className="w-full px-3 sm:px-5 md:px-8 lg:px-10 py-3 md:py-4"
                 style={{ willChange: "transform", transformOrigin: "center center" }}
                 alt="Abhishek Mukherjee"
               />
