@@ -1,0 +1,187 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PortfolioWorkManagerSchemas",
+  "description": "Strict validation schemas for all 3 showcase surfaces in Abhishek Mukherjee's portfolio.",
+  "targets": {
+    "1": {
+      "targetId": "main-page-wheel",
+      "name": "Main Page 3D WorksWheel",
+      "targetFile": "src/data/homeWheelProjects.ts",
+      "imageFolder": "work-manager/pic/01-main-page",
+      "webPublicPrefix": "/work/01-main-page",
+      "description": "3D cylindrical rotating wheel showcase on the Home page (pinned scroll interaction).",
+      "schema": {
+        "type": "object",
+        "required": ["title", "category", "image", "href"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 45,
+            "description": "Display title of the project",
+            "example": "Patent Risk Analysis SaaS"
+          },
+          "category": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 30,
+            "description": "Discipline badge or industry label",
+            "example": "AI & Automation"
+          },
+          "image": {
+            "type": "string",
+            "pattern": "^/work/01-main-page/\\d{2}-[a-z0-9-]+\\.(png|jpg|jpeg|webp|svg|gif)$",
+            "description": "Lossless web path to image in pic/01-main-page/ prefixed with 2-digit sequence",
+            "example": "/work/01-main-page/09-enterprise-risk-bot.webp"
+          },
+          "href": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https?://.+",
+            "description": "Live production URL or GitHub repository URL",
+            "example": "https://github.com/AbhishekMukherjee-BD"
+          }
+        }
+      }
+    },
+    "2": {
+      "targetId": "work-carousel",
+      "name": "Work Page Flagship SqueezeCarousel",
+      "targetFile": "src/data/workFlagshipSlides.ts",
+      "imageFolder": "work-manager/pic/02-work-carousel",
+      "webPublicPrefix": "/work/02-work-carousel",
+      "description": "Flagship interactive carousel with squeeze dynamics at the top of the Work page.",
+      "schema": {
+        "type": "object",
+        "required": ["id", "title", "category", "description", "image", "actionText", "href"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$",
+            "description": "Unique kebab-case slug for slide navigation",
+            "example": "enterprise-patent-scanner"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 45,
+            "description": "High-impact headline for the flagship project",
+            "example": "Patent Risk Analysis SaaS"
+          },
+          "category": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 28,
+            "description": "Punchy pill badge on the carousel plaque",
+            "example": "AI Engine"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 25,
+            "maxLength": 140,
+            "description": "One to two punchy sentences describing business value & tech stack",
+            "example": "Autonomous patent risk scanner evaluating 1.4M filings with instant audit reports."
+          },
+          "image": {
+            "type": "string",
+            "pattern": "^/work/02-work-carousel/\\d{2}-[a-z0-9-]+\\.(png|jpg|jpeg|webp|svg|gif)$",
+            "description": "Lossless web path in pic/02-work-carousel/ with 2-digit sequence",
+            "example": "/work/02-work-carousel/06-patent-risk.svg"
+          },
+          "actionText": {
+            "type": "string",
+            "minLength": 4,
+            "maxLength": 20,
+            "description": "Call-to-action button label",
+            "example": "View Project"
+          },
+          "href": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https?://.+",
+            "description": "Live production or repository URL",
+            "example": "https://github.com/AbhishekMukherjee-BD"
+          }
+        }
+      }
+    },
+    "3": {
+      "targetId": "work-library",
+      "name": "Work Page 3D Glass Folders Library",
+      "targetFile": "src/data/glassFolderData.ts",
+      "imageFolder": "work-manager/pic/03-work-library",
+      "webPublicPrefix": "/work/03-work-library",
+      "description": "Interactive 3D glass folders on the desktop surface of the Work page.",
+      "availableCategories": [
+        {
+          "index": "01",
+          "folderId": "ai-automation",
+          "label": "AI Automation / n8n",
+          "folder": "01-ai-automation",
+          "artPreset": "ember"
+        },
+        {
+          "index": "02",
+          "folderId": "clinic",
+          "label": "Healthcare & Clinics",
+          "folder": "02-healthcare-clinics",
+          "artPreset": "glacier"
+        },
+        {
+          "index": "03",
+          "folderId": "restraunts",
+          "label": "Restaurants & Dining",
+          "folder": "03-restaurants-dining",
+          "artPreset": "dusk"
+        },
+        {
+          "index": "04",
+          "folderId": "ecom",
+          "label": "E-Commerce & Ordering",
+          "folder": "04-ecommerce-ordering",
+          "artPreset": "verdant"
+        },
+        {
+          "index": "05",
+          "folderId": "landing-pages",
+          "label": "Conversion Landing Pages",
+          "folder": "05-conversion-landing-pages",
+          "artPreset": "aurora"
+        }
+      ],
+      "fileItemSchema": {
+        "type": "object",
+        "required": ["name", "meta", "image", "href"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "description": "Name of the sheet or project inside the folder",
+            "example": "Autonomous Report Engine"
+          },
+          "meta": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 45,
+            "description": "Tech stack pills separated by centered dots or short summary",
+            "example": "Node.js · SQL · Supabase"
+          },
+          "image": {
+            "type": "string",
+            "pattern": "^/work/03-work-library/\\d{2}-[a-z0-9-]+/\\d{2}-[a-z0-9-]+\\.(png|jpg|jpeg|webp|svg|gif)$",
+            "description": "Lossless web path to category folder image with 2-digit numbering",
+            "example": "/work/03-work-library/01-ai-automation/05-auto-report.svg"
+          },
+          "href": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https?://.+",
+            "description": "Direct link when clicking this file sheet",
+            "example": "https://github.com/AbhishekMukherjee-BD"
+          }
+        }
+      }
+    }
+  }
+}
