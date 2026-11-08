@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Templates Directory | Executive UI/UX Showcase</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            gold: {
+              300: '#f6e05e',
+              400: '#ecc94b',
+              500: '#d4af37',
+              600: '#c59b27',
+              700: '#977519',
+            },
+            obsidian: '#070a10',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+            serif: ['Cinzel', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #06090e;
+      color: #f1f5f9;
+      font-family: 'Inter', sans-serif;
+    }
+    .hub-card {
+      background: linear-gradient(180deg, rgba(16, 24, 40, 0.75) 0%, rgba(9, 14, 24, 0.95) 100%);
+      border: 1px solid rgba(212, 175, 55, 0.16);
+      border-radius: 1.25rem;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .hub-card:hover {
+      border-color: rgba(212, 175, 55, 0.45);
+      transform: translateY(-4px);
+      box-shadow: 0 30px 65px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(212, 175, 55, 0.3);
+    }
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #fff2b2 0%, #d4af37 50%, #aa7c11 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="min-h-screen selection:bg-gold-500/30 p-4 sm:p-6 lg:p-12 relative">
+
+  <!-- Ambient Glow -->
+  <div class="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-amber-500/10 blur-[150px] rounded-full"></div>
+    <div class="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-cyan-500/5 blur-[160px] rounded-full"></div>
+  </div>
+
+  <!-- Header Section -->
+  <header class="max-w-7xl mx-auto mb-12 border-b border-white/10 pb-8">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div>
+        <div class="flex items-center gap-2 text-xs font-mono text-gold-400 mb-2">
+          <span class="w-2 h-2 rounded-full bg-gold-400 animate-pulse"></span>
+          <span>CURATED DASHBOARD TEMPLATES · WORK SHOWCASE</span>
+        </div>
+        <h1 class="text-3xl sm:text-5xl font-bold font-display tracking-tight text-white">
+          Executive <span class="gold-gradient-text">Dashboard Suite</span>
+        </h1>
+        <p class="text-slate-400 text-sm sm:text-base max-w-2xl mt-3 leading-relaxed">
+          Production-engineered standalone UI/UX templates featuring adjustable frosted glass, pure SVG telemetry grids, enterprise SaaS layouts, directional financial KPIs, and animated live diagram flows.
+        </p>
+      </div>
+
+      <!-- Quick Metrics Strip -->
+      <div class="flex items-center gap-4 font-mono text-xs">
+        <div class="px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-center">
+          <div class="text-xl font-bold text-white font-display">05</div>
+          <div class="text-[10px] text-slate-400 uppercase tracking-wider">Templates</div>
+        </div>
+        <div class="px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-center">
+          <div class="text-xl font-bold text-gold-400 font-display">100%</div>
+          <div class="text-[10px] text-slate-400 uppercase tracking-wider">Interactive</div>
+        </div>
+        <div class="px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-center">
+          <div class="text-xl font-bold text-emerald-400 font-display">AAA</div>
+          <div class="text-[10px] text-slate-400 uppercase tracking-wider">Accessible</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Templates Grid -->
+  <main class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+    <!-- ── Template 1: Adjustable Glass Dashboard ── -->
+    <div class="hub-card flex flex-col justify-between group">
+      <div>
+        <!-- Screenshot Preview Header -->
+        <div class="h-52 w-full border-b border-white/10 relative overflow-hidden bg-black/60">
+          <img src="./thumbnails/01-adjustable-glass-dashboard.png" alt="Adjustable Glass Dashboard" class="w-full h-full object-cover object-top opacity-75 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
+          <div class="absolute inset-0 bg-gradient-to-t from-[#090e18] via-transparent to-black/40"></div>
+          <div class="absolute top-3 left-3 right-3 flex items-center justify-between text-xs font-mono">
+            <span class="px-2 py-0.5 rounded bg-black/70 backdrop-blur-md text-gold-300 border border-gold-500/30">#01 Glass</span>
+            <span class="text-slate-300 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded border border-white/10">@troyjlorents-gh</span>
+          </div>
+          <div class="absolute bottom-3 left-4 right-4">
+            <h3 class="text-base font-bold font-display text-white drop-shadow">Adjustable Glass Dashboard</h3>
+          </div>
+        </div>
+
+        <!-- Body Content -->
+        <div class="p-6 space-y-4">
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Responsive glass workspace with live adjustable blur, opacity, saturation, tint swatches, edge lighting, savings goals, searchable activity ledger, and CSV export.
+          </p>
+          <div class="flex flex-wrap gap-1.5 font-mono text-[10px]">
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">Glassmorphism</span>
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">Live Sliders</span>
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">CSV Export</span>
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">Searchable</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div class="p-6 pt-0 border-t border-white/5 mt-2">
+        <a href="./adjustable-glass-dashboard/index.html" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-gold-500 to-amber-600 hover:brightness-110 text-black font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-gold-500/20">
+          <span>Launch Dashboard</span>
+          <i data-lucide="external-link" class="w-4 h-4"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- ── Template 2: Analytics Bento Grid ── -->
+    <div class="hub-card flex flex-col justify-between group">
+      <div>
+        <!-- Screenshot Preview Header -->
+        <div class="h-52 w-full border-b border-white/10 relative overflow-hidden bg-black/60">
+          <img src="./thumbnails/02-analytics-bento.png" alt="Analytics Bento" class="w-full h-full object-cover object-top opacity-75 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
+          <div class="absolute inset-0 bg-gradient-to-t from-[#090e18] via-transparent to-black/40"></div>
+          <div class="absolute top-3 left-3 right-3 flex items-center justify-between text-xs font-mono">
+            <span class="px-2 py-0.5 rounded bg-black/70 backdrop-blur-md text-cyan-300 border border-cyan-500/30">#02 Bento</span>
+            <span class="text-slate-300 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded border border-white/10">@romanvasnev</span>
+          </div>
+          <div class="absolute bottom-3 left-4 right-4">
+            <h3 class="text-base font-bold font-display text-white drop-shadow">Analytics Bento Grid</h3>
+          </div>
+        </div>
+
+        <!-- Body Content -->
+        <div class="p-6 space-y-4">
+          <p class="text-xs text-slate-400 leading-relaxed">
+            High-density telemetry bento block: scrubbable revenue line with interactive tooltips, desktop vs mobile wave paths, re-flowing category treemap, and seasonality radar.
+          </p>
+          <div class="flex flex-wrap gap-1.5 font-mono text-[10px]">
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">Pure SVG</span>
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">Scrub Tooltip</span>
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">Category Treemap</span>
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">Radar Chart</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div class="p-6 pt-0 border-t border-white/5 mt-2">
+        <a href="./analytics-bento/index.html" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-gold-500 to-amber-600 hover:brightness-110 text-black font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-gold-500/20">
+          <span>Launch Dashboard</span>
+          <i data-lucide="external-link" class="w-4 h-4"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- ── Template 3: App Dashboard Layout ── -->
+    <div class="hub-card flex flex-col justify-between group">
+      <div>
+        <!-- Screenshot Preview Header -->
+        <div class="h-52 w-full border-b border-white/10 relative overflow-hidden bg-black/60">
+          <img src="./thumbnails/03-app-dashboard-layout.png" alt="App Dashboard Layout" class="w-full h-full object-cover object-top opacity-75 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
+          <div class="absolute inset-0 bg-gradient-to-t from-[#090e18] via-transparent to-black/40"></div>
+          <div class="absolute top-3 left-3 right-3 flex items-center justify-between text-xs font-mono">
+            <span class="px-2 py-0.5 rounded bg-black/70 backdrop-blur-md text-amber-300 border border-amber-500/30">#03 SaaS</span>
+            <span class="text-slate-300 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded border border-white/10">@shadcnstore</span>
+          </div>
+          <div class="absolute bottom-3 left-4 right-4">
+            <h3 class="text-base font-bold font-display text-white drop-shadow">App Dashboard Layout</h3>
+          </div>
+        </div>
+
+        <!-- Body Content -->
+        <div class="p-6 space-y-4">
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Full SaaS application layout featuring collateral navigation sidebar, top search command menu, 4-tier KPI stat cards, monthly overview bar charts, and live recent sales feeds.
+          </p>
+          <div class="flex flex-wrap gap-1.5 font-mono text-[10px]">
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">Collapsible Nav</span>
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">Sales Ledger</span>
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">Bar Chart</span>
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">SaaS Suite</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div class="p-6 pt-0 border-t border-white/5 mt-2">
+        <a href="./app-1/index.html" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-gold-500 to-amber-600 hover:brightness-110 text-black font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-gold-500/20">
+          <span>Launch Dashboard</span>
+          <i data-lucide="external-link" class="w-4 h-4"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- ── Template 4: Revenue Charts & KPI Suite ── -->
+    <div class="hub-card flex flex-col justify-between group">
+      <div>
+        <!-- Screenshot Preview Header -->
+        <div class="h-52 w-full border-b border-white/10 relative overflow-hidden bg-black/60">
+          <img src="./thumbnails/04-revenue-charts-kpi.png" alt="Revenue Charts and KPI" class="w-full h-full object-cover object-top opacity-75 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
+          <div class="absolute inset-0 bg-gradient-to-t from-[#090e18] via-transparent to-black/40"></div>
+          <div class="absolute top-3 left-3 right-3 flex items-center justify-between text-xs font-mono">
+            <span class="px-2 py-0.5 rounded bg-black/70 backdrop-blur-md text-emerald-300 border border-emerald-500/30">#04 Finance</span>
+            <span class="text-slate-300 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded border border-white/10">@uvain</span>
+          </div>
+          <div class="absolute bottom-3 left-4 right-4">
+            <h3 class="text-base font-bold font-display text-white drop-shadow">Revenue Charts & KPI Kit</h3>
+          </div>
+        </div>
+
+        <!-- Body Content -->
+        <div class="p-6 space-y-4">
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Revenue dashboard kit with smart directional KPI cards (churn reduction celebrated as positive), gross revenue vs margin area charts, donut tier allocation, and accessible data tables.
+          </p>
+          <div class="flex flex-wrap gap-1.5 font-mono text-[10px]">
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">Directional KPIs</span>
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">Donut Chart</span>
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">Dual Area</span>
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">Screen Reader Safe</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div class="p-6 pt-0 border-t border-white/5 mt-2">
+        <a href="./revenue-charts-kpi/index.html" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-gold-500 to-amber-600 hover:brightness-110 text-black font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-gold-500/20">
+          <span>Launch Dashboard</span>
+          <i data-lucide="external-link" class="w-4 h-4"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- ── Template 5: Ink Orbit Features Engine ── -->
+    <div class="hub-card flex flex-col justify-between group md:col-span-2 lg:col-span-1">
+      <div>
+        <!-- Screenshot Preview Header -->
+        <div class="h-52 w-full border-b border-white/10 relative overflow-hidden bg-black/60">
+          <img src="./thumbnails/05-ink-orbit-features.png" alt="Ink Orbit Features" class="w-full h-full object-cover object-top opacity-75 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
+          <div class="absolute inset-0 bg-gradient-to-t from-[#090e18] via-transparent to-black/40"></div>
+          <div class="absolute top-3 left-3 right-3 flex items-center justify-between text-xs font-mono">
+            <span class="px-2 py-0.5 rounded bg-black/70 backdrop-blur-md text-purple-300 border border-purple-500/30">#05 Orbit</span>
+            <span class="text-slate-300 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded border border-white/10">@kedhareswer</span>
+          </div>
+          <div class="absolute bottom-3 left-4 right-4">
+            <h3 class="text-base font-bold font-display text-white drop-shadow">Ink Orbit Features</h3>
+          </div>
+        </div>
+
+        <!-- Body Content -->
+        <div class="p-6 space-y-4">
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Animated features bento featuring continuous live SVG compilation flows, an orbital ecosystem node synchronizer syncing one integration at a time, and interactive timeline forecast chart.
+          </p>
+          <div class="flex flex-wrap gap-1.5 font-mono text-[10px]">
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">Live Diagrams</span>
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">Orbital Nodes</span>
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">Scrub Forecast</span>
+            <span class="px-2 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-300">Zero Dependencies</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div class="p-6 pt-0 border-t border-white/5 mt-2">
+        <a href="./ink-orbit-features/index.html" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-gold-500 to-amber-600 hover:brightness-110 text-black font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-gold-500/20">
+          <span>Launch Dashboard</span>
+          <i data-lucide="external-link" class="w-4 h-4"></i>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="max-w-7xl mx-auto mt-16 pt-8 border-t border-white/10 text-center text-xs font-mono text-slate-500">
+    All 5 dashboards compiled and ready for live portfolio showcasing.
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
