@@ -26,7 +26,7 @@ export const categoryFolders: CategoryFolder[] = [
     tone: "dark",
     art: "aurora",
     seed: 3,
-    meta: "1 Live Experience",
+    meta: "9 Live Landers",
     appearDelay: 0,
     files: [
       {
@@ -34,6 +34,54 @@ export const categoryFolders: CategoryFolder[] = [
         meta: "Luxury 3D WebGL · Product Showcase",
         image: "/work/03-work-library/05-conversion-landing-pages/01-rolex-submariner.webp",
         href: "https://rolex-submariner-experience-ecru.vercel.app/",
+      },
+      {
+        name: "Apex Peak Roofing",
+        meta: "Architectural Roofing · High-Conversion Lander",
+        image: "/work/03-work-library/05-conversion-landing-pages/02-apex-peak-roofing.webp",
+        href: "https://apex-peak-roofing.whop.site",
+      },
+      {
+        name: "SSRINI Luxury Handcrafts",
+        meta: "Artisanal Fine Art · Bespoke Lander",
+        image: "/work/03-work-library/05-conversion-landing-pages/03-ssrini-luxury-handcrafts.webp",
+        href: "https://ssrinihandcraftecom.vercel.app/ecom/",
+      },
+      {
+        name: "Patent Checker SaaS",
+        meta: "Legal AI Compliance · Product Lander",
+        image: "/work/03-work-library/05-conversion-landing-pages/04-patent-checker-saas.webp",
+        href: "https://patent-check-three.vercel.app",
+      },
+      {
+        name: "ASP Kitchen & Dining",
+        meta: "Continental Dining · Brand Showcase",
+        image: "/work/03-work-library/05-conversion-landing-pages/05-asp-kitchen-dining.webp",
+        href: "https://asp-cafe.vercel.app",
+      },
+      {
+        name: "California Medical Clinic",
+        meta: "Healthcare & Telehealth · Patient Portal",
+        image: "/work/03-work-library/05-conversion-landing-pages/06-california-medical-clinic.webp",
+        href: "https://california-medical-clinic.vercel.app",
+      },
+      {
+        name: "ASP Kitchen Continental Menu",
+        meta: "Interactive Menu & Pricing · Reservation Lander",
+        image: "/work/03-work-library/05-conversion-landing-pages/07-asp-kitchen-menu.webp",
+        href: "https://asp-cafe.vercel.app",
+      },
+      {
+        name: "ASP Cafe Digital Experience",
+        meta: "Hospitality Storytelling · Online Orders",
+        image: "/work/03-work-library/05-conversion-landing-pages/08-asp-cafe-behala.webp",
+        href: "https://cafe-webdev.vercel.app",
+      },
+      {
+        name: "ASP Cafe Beverages & Treats",
+        meta: "Specialty Beverages · Fast Checkout",
+        image: "/work/03-work-library/05-conversion-landing-pages/09-asp-cafe-beverages.webp",
+        href: "https://cafe-webdev.vercel.app",
       },
     ],
   },
