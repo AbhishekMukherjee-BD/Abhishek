@@ -193,4 +193,18 @@ export const categoryFolders: CategoryFolder[] = [
       },
     ],
   },
+  {
+    id: "dashboard-templates",
+    categoryNumber: "06",
+    label: "Dashboard Templates",
+    subtitle: "Client Turnkey Systems & Analytics",
+    details: "Production-grade analytics dashboards, turnkey admin consoles, and realtime operational telemetry portals built for client deployment.",
+    techTags: ["React", "TypeScript", "Tailwind CSS", "Recharts", "Supabase"],
+    tone: "dark",
+    art: "ember",
+    seed: 29,
+    meta: "Templates Arriving Soon",
+    appearDelay: 600,
+    files: [],
+  },
 ];
