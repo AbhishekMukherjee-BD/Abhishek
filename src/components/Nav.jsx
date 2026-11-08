@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useRef, useState, useEffect } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import gsap from "gsap";
-import videoback from "../assets/video/glassy.mp4";
+import DitherVeil from "./DitherVeil";
 import useMagnetic from "../Hooks/useMagnetic";
 import { Link, useLocation } from "react-router-dom";
 
@@ -27,6 +27,9 @@ function Nav() {
 
     if (menuOpen) {
       document.body.style.overflow = "hidden";
+      setTimeout(() => {
+        window.dispatchEvent(new Event("resize"));
+      }, 350);
 
       gsap.fromTo(
         menuPanelRef.current,
@@ -125,7 +128,7 @@ function Nav() {
       {/* ===== FULLSCREEN OVERLAY MENU PANEL ===== */}
       <div
         ref={menuPanelRef}
-        className="fixed inset-0 z-[200] flex"
+        className="fixed inset-0 z-[200] flex overflow-y-auto overflow-x-hidden"
         style={{
           background: "#0a0a0a",
           clipPath: "circle(0% at calc(100% - 40px) 40px)",
@@ -209,19 +212,30 @@ function Nav() {
               </p>
             </div>
 
-            {/* Video preview container */}
+            {/* DitherVeil interactive visual experience */}
             <div
-              className="w-full md:w-64 h-36 rounded-2xl overflow-hidden relative"
-              style={{ border: "1px solid rgba(255,255,255,0.1)" }}
+              className="w-full md:w-80 lg:w-[360px] max-h-[42vh] md:max-h-[380px] rounded-2xl overflow-hidden relative shadow-2xl group transition-all duration-300"
+              style={{
+                width: "100%",
+                height: "600px",
+                position: "relative",
+                border: "1px solid rgba(255, 255, 255, 0.12)",
+                background: "#120f17",
+              }}
             >
-              <video
-                src={videoback}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-full object-cover"
+              <DitherVeil
+                src="https://images.unsplash.com/photo-1737071371043-761e02b1ef95?q=80&w=1400&auto=format&fit=crop"
+                pattern="floyd"
+                pixelSize={2}
+                inkColor="#120f17"
+                paperColor="#f4f1ea"
+                revealRadius={200}
+                softness={0.6}
+                linger={1}
               />
+              <div className="absolute bottom-3 right-3 pointer-events-none px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-mono text-white/50 tracking-wider uppercase opacity-75">
+                Hover to Reveal
+              </div>
             </div>
 
             {/* Direct Contact & Socials */}
