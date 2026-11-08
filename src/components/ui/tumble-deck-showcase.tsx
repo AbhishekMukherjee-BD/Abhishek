@@ -37,28 +37,28 @@ const wrap = (v: number, n: number) => (n ? ((v % n) + n) % n : 0);
 
 /**
  * Fall angle curve:
- * Accelerates cubically until t = 0.78 (-90deg),
- * then executes a gentle, damped rebound bounce before settling flat.
+ * Continuous cubic rotation that glides smoothly from 0deg down to -90deg,
+ * with a subtle, cushioned bounce near the resting plane.
  */
 function fallAngle(progress: number): number {
   const p = clamp01(progress);
-  const cutoff = 0.78;
-  if (p <= cutoff) {
-    const r = p / cutoff;
-    return -90 * r * r * r;
+  if (p < 0.85) {
+    const r = p / 0.85;
+    return -90 * (r * r * (3 - 2 * r));
   }
-  const bounce = (p - cutoff) / (1 - cutoff);
-  return -90 + 6 * Math.sin(Math.PI * bounce) * (1 - bounce);
+  const bounce = (p - 0.85) / 0.15;
+  return -90 + 2.5 * Math.sin(Math.PI * bounce) * (1 - bounce);
 }
 
 /**
  * Smooth step curve advancing rear cards forward in Z-space as the front card falls.
+ * Silky continuous smoothstep across the entire range with zero dead zones.
  */
 function deckAdvance(scrollPos: number): number {
   const floorPos = Math.floor(scrollPos);
   const fraction = scrollPos - floorPos;
-  const t = clamp01((fraction - 0.28) / 0.6);
-  return floorPos + t * t * (3 - 2 * t);
+  const t = fraction * fraction * (3 - 2 * fraction);
+  return floorPos + t;
 }
 
 /**
@@ -66,14 +66,14 @@ function deckAdvance(scrollPos: number): number {
  */
 function cardPose(idx: number, scrollPos: number, maxDepth: number) {
   const delta = scrollPos - idx;
-  const lift = (idx - Math.floor(scrollPos) + 3) * 0.8; // subtle floor lift offset
+  const floorLift = (idx % 8) * 0.8;
 
   if (delta >= 1) {
     // Card has fallen completely flat onto the floor plane
     return {
       angle: -90,
       z: 0,
-      lift,
+      lift: floorLift,
       opacity: delta < 3 ? 1 : 0,
       flat: true,
     };
@@ -84,7 +84,7 @@ function cardPose(idx: number, scrollPos: number, maxDepth: number) {
     return {
       angle: fallAngle(delta),
       z: 0,
-      lift,
+      lift: (1 - delta) * 0.8 + floorLift,
       opacity: 1,
       flat: false,
     };
@@ -130,6 +130,8 @@ export default function TumbleDeckShowcase({
   const sliderTrackRef = useRef<HTMLDivElement>(null);
   const sliderThumbRef = useRef<HTMLDivElement>(null);
   const sliderFillRef = useRef<HTMLDivElement>(null);
+  const dotRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const dragBaseRevRef = useRef<number>(0);
   const [isDraggingSlider, setIsDraggingSlider] = useState(false);
   const [isSliderHovered, setIsSliderHovered] = useState(false);
 
@@ -149,12 +151,36 @@ export default function TumbleDeckShowcase({
     const roundedIdx = wrap(Math.round(curPos), cardCount);
     setActiveCardIndex((prev) => (prev !== roundedIdx ? roundedIdx : prev));
 
-    // Update Slider track & thumb directly for 60fps smoothness without re-render latency
-    if (sliderThumbRef.current && sliderFillRef.current && cardCount > 1) {
-      const normalized = (wrap(curPos, cardCount) / (cardCount - 1)) * 100;
-      const clampedPercent = Math.max(0, Math.min(100, normalized));
-      sliderThumbRef.current.style.left = `${clampedPercent}%`;
-      sliderFillRef.current.style.width = `${clampedPercent}%`;
+    // Update Slider track, thumb, and magnetic dots directly for 60/120fps smoothness without re-render latency
+    if (sliderThumbRef.current && sliderFillRef.current) {
+      if (cardCount > 1) {
+        const curCardPos = wrap(curPos, cardCount);
+        const normalized = (curCardPos / (cardCount - 1)) * 100;
+        const clampedPercent = Math.max(0, Math.min(100, normalized));
+        sliderThumbRef.current.style.left = `${clampedPercent}%`;
+        sliderFillRef.current.style.width = `${clampedPercent}%`;
+
+        // Dynamic magnetic tick-dots response: scales and glows as thumb draws near
+        dotRefs.current.forEach((dotEl, idx) => {
+          if (!dotEl) return;
+          const dist = Math.abs(curCardPos - idx);
+          const proximity = Math.max(0, 1 - dist / 0.55);
+          const isPassed = curCardPos >= idx - 0.04;
+
+          const scale = 1 + proximity * 0.55;
+          dotEl.style.transform = `translate(-50%, -50%) scale(${scale.toFixed(3)})`;
+          if (proximity > 0.25) {
+            dotEl.style.background = "#ffffff";
+            dotEl.style.boxShadow = `0 0 ${Math.round(8 + proximity * 8)}px rgba(255, 255, 255, 0.95), 0 0 ${Math.round(proximity * 16)}px rgba(96, 193, 229, 0.85)`;
+          } else {
+            dotEl.style.background = isPassed ? "#ffffff" : "rgba(255, 255, 255, 0.4)";
+            dotEl.style.boxShadow = isPassed ? "0 0 5px rgba(255, 255, 255, 0.85)" : "none";
+          }
+        });
+      } else {
+        sliderThumbRef.current.style.left = "100%";
+        sliderFillRef.current.style.width = "100%";
+      }
     }
 
     cardRefs.current.forEach((cardEl, poolIdx) => {
@@ -187,6 +213,7 @@ export default function TumbleDeckShowcase({
 
   useLayoutEffect(() => {
     activeIndicesRef.current = [];
+    dotRefs.current = [];
   }, [cards]);
 
   // Fit and perspective calculations based on container dimensions
@@ -232,16 +259,17 @@ export default function TumbleDeckShowcase({
 
     const updateInertia = () => {
       const diff = posRef.current.target - posRef.current.current;
-      posRef.current.current += diff * 0.14;
+      posRef.current.current += diff * 0.16;
 
-      if (Math.abs(diff) < 0.001) {
+      if (Math.abs(diff) < 0.0005) {
         posRef.current.current = posRef.current.target;
         isSettlingRef.current = false;
         animIdRef.current = null;
+        renderFrame();
       } else {
+        renderFrame();
         animIdRef.current = requestAnimationFrame(updateInertia);
       }
-      renderFrame();
     };
 
     animIdRef.current = requestAnimationFrame(updateInertia);
@@ -266,7 +294,7 @@ export default function TumbleDeckShowcase({
 
   const settleToNearest = useCallback(
     (dir: number = 0) => {
-      const cur = posRef.current.target;
+      const cur = posRef.current.current;
       let target = Math.round(cur);
       if (dir > 0) target = Math.floor(cur + 0.65);
       else if (dir < 0) target = Math.ceil(cur - 0.65);
@@ -275,35 +303,79 @@ export default function TumbleDeckShowcase({
     [pushTarget]
   );
 
-  // Slider Drag & Scrub Mechanics
+  // Slider Drag & Scrub Mechanics with Soft Magnetic Pull
   const calculateTargetFromPointer = useCallback(
-    (clientX: number) => {
+    (clientX: number, isDirectDrag: boolean = true) => {
       const track = sliderTrackRef.current;
       if (!track || cardCount <= 1) return;
       const rect = track.getBoundingClientRect();
-      const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-      const targetCardIdx = ratio * (cardCount - 1);
+      if (rect.width <= 0) return;
 
-      const curPos = posRef.current.current;
-      const currentRev = Math.floor(curPos / cardCount) * cardCount;
-      pushTarget(currentRev + targetCardIdx, false);
+      // 1. Raw continuous ratio from pointer [0, 1]
+      const rawRatio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      // 2. Raw continuous index along cards
+      const rawIndex = rawRatio * (cardCount - 1);
+
+      // 3. Magnetic attraction to nearest work dot
+      const nearestDot = Math.round(rawIndex);
+      const delta = rawIndex - nearestDot; // [-0.5, 0.5]
+      const magneticRadius = 0.28; // 28% capture zone around each dot
+
+      let effectiveIndex = rawIndex;
+      if (Math.abs(delta) < magneticRadius) {
+        // Soft non-linear gravitational pull curve
+        const t = Math.abs(delta) / magneticRadius; // [0, 1]
+        // Power 1.7 creates a gentle pull near center and smooth breakaway at edge
+        const pullFactor = Math.pow(t, 1.7);
+        const effectiveDelta = Math.sign(delta) * magneticRadius * pullFactor;
+        effectiveIndex = nearestDot + effectiveDelta;
+      }
+
+      // 4. Update deck position within current revolution
+      const currentRev = dragBaseRevRef.current;
+      const targetPos = currentRev + effectiveIndex;
+
+      posRef.current.target = targetPos;
+
+      if (isDirectDrag) {
+        // Instantaneous 1:1 real-time analog tracking like a volume slider
+        posRef.current.current = targetPos;
+        renderFrame();
+      } else {
+        // Smooth inertial transition
+        if (!isSettlingRef.current) {
+          startInertia();
+        }
+      }
     },
-    [cardCount, pushTarget]
+    [cardCount, renderFrame, startInertia]
   );
 
   const onSliderPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDraggingSlider(true);
-    e.currentTarget.setPointerCapture(e.pointerId);
-    calculateTargetFromPointer(e.clientX);
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {}
+
+    const curPos = posRef.current.current;
+    dragBaseRevRef.current = cardCount > 0 ? Math.floor(curPos / cardCount) * cardCount : 0;
+
+    if (animIdRef.current) {
+      cancelAnimationFrame(animIdRef.current);
+      animIdRef.current = null;
+    }
+    isSettlingRef.current = false;
+
+    calculateTargetFromPointer(e.clientX, true);
   };
 
   const onSliderPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!isDraggingSlider) return;
     e.preventDefault();
     e.stopPropagation();
-    calculateTargetFromPointer(e.clientX);
+    calculateTargetFromPointer(e.clientX, true);
   };
 
   const onSliderPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -602,27 +674,25 @@ export default function TumbleDeckShowcase({
                 {/* Active Range Fill (Pure White with Glow) */}
                 <div
                   ref={sliderFillRef}
-                  className="absolute left-0 top-0 bottom-0 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.85)] transition-[width] duration-75"
-                  style={{ width: `${cardCount > 1 ? (activeCardIndex / (cardCount - 1)) * 100 : 0}%` }}
+                  className="absolute left-0 top-0 bottom-0 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.85)]"
                   data-slot="slider-range"
                 />
 
-                {/* Origin UI Stepped Tick Marks (White) */}
+                {/* Origin UI Stepped Tick Marks (White with Dynamic Magnetic Proximity) */}
                 {Array.from({ length: cardCount }, (_, idx) => {
                   const percent = cardCount > 1 ? (idx / (cardCount - 1)) * 100 : 50;
-                  const isPassed = activeCardIndex >= idx;
                   return (
                     <button
                       key={idx}
+                      ref={(el) => {
+                        dotRefs.current[idx] = el;
+                      }}
                       type="button"
                       onClick={(e) => goToCard(idx, e)}
                       aria-label={`Jump to card ${idx + 1}`}
-                      className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-2 h-2 rounded-full transition-all duration-150 z-10 cursor-pointer"
+                      className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-2 h-2 rounded-full z-10 cursor-pointer pointer-events-auto transition-[transform,box-shadow,background-color] duration-150"
                       style={{
                         left: `${percent}%`,
-                        background: isPassed ? "#ffffff" : "rgba(255, 255, 255, 0.45)",
-                        boxShadow: isPassed ? "0 0 6px rgba(255, 255, 255, 0.9)" : "none",
-                        transform: idx === activeCardIndex ? "translate(-50%, -50%) scale(1.4)" : "translate(-50%, -50%) scale(1)",
                       }}
                     />
                   );
@@ -638,9 +708,6 @@ export default function TumbleDeckShowcase({
                       ? "scale-115 ring-2 ring-white/25"
                       : ""
                   }`}
-                  style={{
-                    left: `${cardCount > 1 ? (activeCardIndex / (cardCount - 1)) * 100 : 0}%`,
-                  }}
                   data-slot="slider-thumb"
                   data-dragging={isDraggingSlider || undefined}
                 >
