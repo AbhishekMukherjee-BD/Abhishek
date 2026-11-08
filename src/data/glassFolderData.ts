@@ -203,8 +203,39 @@ export const categoryFolders: CategoryFolder[] = [
     tone: "dark",
     art: "ember",
     seed: 29,
-    meta: "Templates Arriving Soon",
+    meta: "5 Client Templates",
     appearDelay: 600,
-    files: [],
+    files: [
+      {
+        name: "Adjustable Glass Dashboard",
+        meta: "@troyjlorents-gh · Interactive Glass",
+        image: "/work/03-work-library/06-dashboard-templates/01-adjustable-glass-dashboard.webp",
+        href: "https://abhishek-brown-iota.vercel.app/dashboards/adjustable-glass-dashboard/index.html",
+      },
+      {
+        name: "Analytics Bento Grid",
+        meta: "@romanvasnev · Bento Analytics",
+        image: "/work/03-work-library/06-dashboard-templates/02-analytics-bento.webp",
+        href: "https://abhishek-brown-iota.vercel.app/dashboards/analytics-bento/index.html?theme=dark",
+      },
+      {
+        name: "App Dashboard Layout",
+        meta: "@shadcnstore · SaaS Console",
+        image: "/work/03-work-library/06-dashboard-templates/03-app-dashboard-layout.webp",
+        href: "https://abhishek-brown-iota.vercel.app/dashboards/app-1/index.html?theme=dark",
+      },
+      {
+        name: "Revenue Charts & KPI Kit",
+        meta: "@uvain · Financial KPI Kit",
+        image: "/work/03-work-library/06-dashboard-templates/04-revenue-charts-kpi.webp",
+        href: "https://abhishek-brown-iota.vercel.app/dashboards/revenue-charts-kpi/index.html?theme=dark",
+      },
+      {
+        name: "Ink Orbit Features Engine",
+        meta: "@kedhareswer · Orbit Automation",
+        image: "/work/03-work-library/06-dashboard-templates/05-ink-orbit-features.webp",
+        href: "https://abhishek-brown-iota.vercel.app/dashboards/ink-orbit-features/index.html?theme=dark",
+      },
+    ],
   },
 ];
