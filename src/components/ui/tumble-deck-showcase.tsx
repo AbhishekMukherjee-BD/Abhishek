@@ -130,6 +130,7 @@ export default function TumbleDeckShowcase({
   const sliderThumbRef = useRef<HTMLDivElement>(null);
   const sliderFillRef = useRef<HTMLDivElement>(null);
   const [isDraggingSlider, setIsDraggingSlider] = useState(false);
+  const [isSliderHovered, setIsSliderHovered] = useState(false);
 
   const animIdRef = useRef<number | null>(null);
   const settleTimerRef = useRef<any>(null);
@@ -565,88 +566,118 @@ export default function TumbleDeckShowcase({
             boxShadow: "inset 0 1px 0 rgba(160, 224, 239, 0.25), 0 18px 40px -10px rgba(0, 0, 0, 0.75)",
           }}
         >
-          {/* ── Row 1: Interactive Slider Scrubber Control Ribbon ── */}
-          <div className="flex items-center gap-2 w-full select-none">
-            {/* Step Prev Button */}
+          {/* ── Row 1: Origin UI Pure White Slider Scrubber Ribbon ── */}
+          <div className="flex items-center gap-2.5 w-full select-none">
+            {/* Step Prev Button (White) */}
             <button
               type="button"
               onClick={prevCard}
               aria-label="Previous card in stack"
-              className="shrink-0 cursor-pointer flex items-center justify-center w-6 h-6 rounded-md bg-white/10 hover:bg-[#60c1e5]/25 active:scale-90 transition-all text-[#60c1e5] hover:text-[#d4af37]"
+              className="shrink-0 cursor-pointer flex items-center justify-center w-6 h-6 rounded-md bg-white/10 hover:bg-white/20 active:scale-90 transition-all text-white border border-white/20 shadow-xs"
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
 
-            {/* Slider Scrubber Track */}
+            {/* Origin UI Slider Scrubber Track (White Theme) */}
             <div
               ref={sliderTrackRef}
               onPointerDown={onSliderPointerDown}
               onPointerMove={onSliderPointerMove}
               onPointerUp={onSliderPointerUp}
               onPointerCancel={onSliderPointerUp}
-              className="relative flex-1 h-6 flex items-center cursor-pointer group/slider py-1 touch-none"
+              onMouseEnter={() => setIsSliderHovered(true)}
+              onMouseLeave={() => setIsSliderHovered(false)}
+              className="relative flex-1 h-7 flex items-center cursor-pointer group/slider py-1 touch-none"
               title="Slide or scroll to flip through cards"
+              data-slot="slider"
             >
-              {/* Background Track Rail */}
-              <div className="relative w-full h-1.5 rounded-full bg-white/15 overflow-visible">
-                {/* Active Gradient Fill Bar */}
+              {/* Background Track Rail (White/20) */}
+              <div
+                className="relative w-full h-1.5 rounded-full bg-white/20 overflow-visible"
+                data-slot="slider-track"
+              >
+                {/* Active Range Fill (Pure White with Glow) */}
                 <div
                   ref={sliderFillRef}
-                  className="absolute left-0 top-0 bottom-0 rounded-full bg-gradient-to-r from-[#60c1e5] via-[#a0e0ef] to-[#d4af37] transition-[width] duration-75"
+                  className="absolute left-0 top-0 bottom-0 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.85)] transition-[width] duration-75"
                   style={{ width: `${cardCount > 1 ? (activeCardIndex / (cardCount - 1)) * 100 : 0}%` }}
+                  data-slot="slider-range"
                 />
 
-                {/* Card Step Pips (Dots) */}
+                {/* Origin UI Stepped Tick Marks (White) */}
                 {Array.from({ length: cardCount }, (_, idx) => {
                   const percent = cardCount > 1 ? (idx / (cardCount - 1)) * 100 : 50;
-                  const isActive = idx === activeCardIndex;
+                  const isPassed = activeCardIndex >= idx;
                   return (
                     <button
                       key={idx}
                       type="button"
                       onClick={(e) => goToCard(idx, e)}
                       aria-label={`Jump to card ${idx + 1}`}
-                      className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full transition-all duration-200 z-10 cursor-pointer"
+                      className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-2 h-2 rounded-full transition-all duration-150 z-10 cursor-pointer"
                       style={{
                         left: `${percent}%`,
-                        background: isActive ? "#d4af37" : "rgba(255, 255, 255, 0.35)",
-                        boxShadow: isActive ? "0 0 8px rgba(212, 175, 55, 0.85)" : "none",
-                        transform: isActive ? "translate(-50%, -50%) scale(1.35)" : "translate(-50%, -50%) scale(1)",
+                        background: isPassed ? "#ffffff" : "rgba(255, 255, 255, 0.45)",
+                        boxShadow: isPassed ? "0 0 6px rgba(255, 255, 255, 0.9)" : "none",
+                        transform: idx === activeCardIndex ? "translate(-50%, -50%) scale(1.4)" : "translate(-50%, -50%) scale(1)",
                       }}
                     />
                   );
                 })}
 
-                {/* Draggable Glowing Thumb */}
+                {/* Origin UI Pure White Thumb with Dynamic Tracking Tooltip */}
                 <div
                   ref={sliderThumbRef}
-                  className={`absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-[#d4af37] border-2 border-[#070d18] shadow-[0_0_12px_rgba(212,175,55,0.9)] transition-transform duration-100 z-20 pointer-events-none ${
-                    isDraggingSlider ? "scale-130 ring-2 ring-[#60c1e5]" : "group-hover/slider:scale-115"
+                  className={`absolute top-1/2 -translate-y-1/2 -translate-x-1/2 block size-4 shrink-0 rounded-full border-2 border-white bg-white shadow-[0_0_12px_rgba(255,255,255,0.95)] outline-none transition-[transform,box-shadow] z-20 pointer-events-none ${
+                    isDraggingSlider
+                      ? "scale-125 ring-4 ring-white/35"
+                      : isSliderHovered
+                      ? "scale-115 ring-2 ring-white/25"
+                      : ""
                   }`}
                   style={{
                     left: `${cardCount > 1 ? (activeCardIndex / (cardCount - 1)) * 100 : 0}%`,
                   }}
-                />
+                  data-slot="slider-thumb"
+                  data-dragging={isDraggingSlider || undefined}
+                >
+                  {/* Origin UI Floating Value Tooltip (White Theme) */}
+                  <div
+                    className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-0.5 rounded text-[10px] font-mono font-bold whitespace-nowrap z-30 transition-all duration-150 pointer-events-none bg-white text-black shadow-[0_4px_12px_rgba(0,0,0,0.6)] ${
+                      isDraggingSlider || isSliderHovered
+                        ? "opacity-100 translate-y-0"
+                        : "opacity-0 translate-y-1 group-hover/slider:opacity-100 group-hover/slider:translate-y-0"
+                    }`}
+                  >
+                    <span>
+                      {currentCard?.title
+                        ? `${String(activeCardIndex + 1).padStart(2, "0")} · ${currentCard.title}`
+                        : `Slide ${String(activeCardIndex + 1).padStart(2, "0")}`}
+                    </span>
+                    {/* Tooltip downward caret */}
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-white" />
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Step Next Button */}
+            {/* Step Next Button (White) */}
             <button
               type="button"
               onClick={nextCard}
               aria-label="Next card in stack"
-              className="shrink-0 cursor-pointer flex items-center justify-center w-6 h-6 rounded-md bg-white/10 hover:bg-[#60c1e5]/25 active:scale-90 transition-all text-[#60c1e5] hover:text-[#d4af37]"
+              className="shrink-0 cursor-pointer flex items-center justify-center w-6 h-6 rounded-md bg-white/10 hover:bg-white/20 active:scale-90 transition-all text-white border border-white/20 shadow-xs"
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M9 18l6-6-6-6" />
               </svg>
             </button>
 
-            {/* Slide Index Badge */}
-            <span className="shrink-0 font-mono text-[10px] font-bold text-[#a0e0ef] px-1.5 py-0.5 rounded bg-black/50 border border-[#60c1e5]/25 whitespace-nowrap">
-              <span className="text-[#d4af37]">{String(activeCardIndex + 1).padStart(2, "0")}</span> / {String(cardCount).padStart(2, "0")}
+            {/* Slide Index Badge (Pure White Monospace) */}
+            <span className="shrink-0 font-mono text-[10px] font-bold text-white px-2 py-0.5 rounded bg-white/10 border border-white/20 whitespace-nowrap shadow-xs">
+              <span className="text-white font-extrabold">{String(activeCardIndex + 1).padStart(2, "0")}</span> / {String(cardCount).padStart(2, "0")}
             </span>
           </div>
 
@@ -654,14 +685,14 @@ export default function TumbleDeckShowcase({
           <div className="flex items-center justify-between gap-2 pt-1 border-t border-white/10">
             <div className="flex flex-col min-w-0 pr-2">
               <h4
-                className="text-xs sm:text-sm font-semibold tracking-tight text-[#f0efea] truncate"
+                className="text-xs sm:text-sm font-semibold tracking-tight text-white truncate"
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}
               >
                 {currentCard.title || currentCard.alt}
               </h4>
               {currentCard.meta && (
                 <p
-                  className="text-[10px] sm:text-[11px] font-mono text-[#60c1e5]/80 truncate mt-0.5"
+                  className="text-[10px] sm:text-[11px] font-mono text-white/70 truncate mt-0.5"
                 >
                   {currentCard.meta}
                 </p>
@@ -674,7 +705,7 @@ export default function TumbleDeckShowcase({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="shrink-0 px-2.5 py-1 rounded-md text-[11px] font-medium font-mono inline-flex items-center gap-1 bg-[#d4af37] text-[#070d18] hover:bg-[#ffe066] hover:scale-105 active:scale-95 transition-all duration-200 shadow-[0_2px_10px_rgba(212,175,55,0.35)]"
+                className="shrink-0 px-2.5 py-1 rounded-md text-[11px] font-bold font-mono inline-flex items-center gap-1 bg-white text-black hover:bg-white/90 hover:scale-105 active:scale-95 transition-all duration-200 shadow-[0_2px_12px_rgba(255,255,255,0.3)]"
               >
                 <span>View</span>
                 <span className="text-[9px]">↗</span>
