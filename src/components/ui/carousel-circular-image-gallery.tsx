@@ -30,33 +30,36 @@ export interface CircularImageGalleryProps {
 // 16:9 Virtual Geometry Coordinates for high-resolution vector clipping
 const SVG_W = 1600;
 const SVG_H = 900;
-const TAB_R = 16;
-const TAB_GAP = 28;
-const BIG_R = 3600; // Large radius that completely spans the 1600x900 canvas
+const TAB_R = 28;      // Generous, luxury tactile thumbnail radius (~46px on desktop)
+const TAB_GAP = 32;    // Architectural spacing between tabs
+const BIG_R = 3600;    // Full canvas span
+
+type SlideRole = "steady" | "incoming" | "outgoing" | "idle";
 
 interface GalleryItemProps {
   id: number;
   total: number;
   slide: CircularGallerySlide;
-  isOpen: boolean;
-  isInPlace: boolean;
+  role: SlideRole;
   onInPlace: (id: number) => void;
+  onTransitionComplete: () => void;
 }
 
 /**
  * 1:1 Implementation of Le Thanh's (@minhxthanh) signature circular image reveal.
- * - Expanding slide: Starts at thumbnail dot -> rises to center (0.2s power3.inOut) -> blossoms offscreen left (0.4s power4.in).
- * - Closing slide: Waits 0.6s -> shrinks from offscreen right to center (0.4s power4.out) -> arcs down with bounce physics (1.0s bounce.out).
+ * Explicitly roles each slide:
+ * - incoming: starts at its thumbnail dot -> rises to center (0.2s power3.inOut) -> sweeps offscreen left (0.4s power4.in).
+ * - outgoing: waits 0.6s -> shrinks from offscreen right to center (0.4s power4.out) -> arcs down with rubber-ball bounce physics (1.0s bounce.out).
+ * - idle: cleanly hidden at zIndex 0 with 0 opacity so it never blocks or desyncs other slides.
  */
 function GalleryImageItem({
   id,
   total,
   slide,
-  isOpen,
-  isInPlace,
+  role,
   onInPlace,
+  onTransitionComplete,
 }: GalleryItemProps) {
-  const [initial, setInitial] = useState(true);
   const circleRef = useRef<SVGCircleElement | null>(null);
 
   // Position calculations matching the dock coordinates exactly
@@ -69,7 +72,7 @@ function GalleryImageItem({
     const startX = getDockStartX();
     return {
       cx: startX + id * (TAB_R * 2 + TAB_GAP) + TAB_R,
-      cy: SVG_H - 58,
+      cy: SVG_H - 64,
       r: TAB_R,
     };
   }, [id, getDockStartX]);
@@ -79,7 +82,7 @@ function GalleryImageItem({
     return {
       cx: small.cx,
       cy: SVG_H / 2,
-      r: TAB_R * 2.4,
+      r: TAB_R * 2.5,
     };
   }, [getPosSmall]);
 
@@ -87,7 +90,7 @@ function GalleryImageItem({
     return {
       cx: SVG_W / 2,
       cy: SVG_H / 2,
-      r: TAB_R * 7,
+      r: TAB_R * 6.5,
     };
   }, []);
 
@@ -112,51 +115,51 @@ function GalleryImageItem({
     const el = circleRef.current;
     const transformOrigin = { transformOrigin: "center center" };
 
-    const durRise = initial ? 0 : 0.2;
-    const durExpand = initial ? 0 : 0.4;
-    const durContract = initial ? 0 : 0.4;
-    const durBounce = initial ? 0.01 : 1.0;
-    const delay = initial ? 0 : 0.6;
+    if (role === "steady") {
+      gsap.killTweensOf(el);
+      gsap.set(el, { ...transformOrigin, ...getPosEnd() });
+      return;
+    }
 
-    if (isOpen) {
-      if (initial) {
-        setInitial(false);
-        gsap.set(el, { ...transformOrigin, ...getPosEnd() });
-        onInPlace(id);
-        return;
-      }
+    if (role === "idle") {
+      gsap.killTweensOf(el);
+      gsap.set(el, { ...transformOrigin, ...getPosSmall() });
+      return;
+    }
 
+    if (role === "incoming") {
+      gsap.killTweensOf(el);
       gsap
         .timeline()
         .set(el, { ...transformOrigin, ...getPosSmall() })
         .to(el, {
           ...transformOrigin,
           ...getPosCenter(),
-          duration: durRise,
+          duration: 0.2,
           ease: "power3.inOut",
         })
         .to(el, {
           ...transformOrigin,
           ...getPosEnd(),
-          duration: durExpand,
+          duration: 0.4,
           ease: "power4.in",
-          onComplete: () => onInPlace(id),
+          onComplete: () => {
+            onInPlace(id);
+          },
         });
-    } else {
-      if (initial) {
-        setInitial(false);
-        gsap.set(el, { ...transformOrigin, ...getPosSmall() });
-        return;
-      }
+      return;
+    }
 
+    if (role === "outgoing") {
+      gsap.killTweensOf(el);
       gsap
-        .timeline({ overwrite: true })
+        .timeline()
         .set(el, { ...transformOrigin, ...getPosStart() })
         .to(el, {
           ...transformOrigin,
           ...getPosCenter(),
-          delay,
-          duration: durContract,
+          delay: 0.6,
+          duration: 0.4,
           ease: "power4.out",
         })
         .to(el, {
@@ -165,21 +168,27 @@ function GalleryImageItem({
             path: [getPosSmallAbove(), getPosSmall()],
             curviness: 1,
           },
-          duration: durBounce,
+          duration: 1.0,
           ease: "bounce.out",
+          onComplete: () => {
+            onTransitionComplete();
+          },
         });
+      return;
     }
   }, [
-    isOpen,
-    initial,
+    role,
     id,
     onInPlace,
+    onTransitionComplete,
     getPosSmall,
     getPosSmallAbove,
     getPosCenter,
     getPosEnd,
     getPosStart,
   ]);
+
+  const isRect = role === "steady";
 
   return (
     <svg
@@ -198,7 +207,7 @@ function GalleryImageItem({
         </clipPath>
       </defs>
 
-      <g clipPath={`url(#${isInPlace ? `clip_rect_${id}` : `clip_circle_${id}`})`}>
+      <g clipPath={`url(#${isRect ? `clip_rect_${id}` : `clip_circle_${id}`})`}>
         <image
           href={slide.image}
           width={SVG_W}
@@ -212,8 +221,8 @@ function GalleryImageItem({
 
 /**
  * Native SVG Circular Tabs Dock
- * Coordinates align 1:1 with `getPosSmall(id)`, guaranteeing that the contracting circle
- * drops with physical bounce physics directly onto the exact thumbnail badge.
+ * Thumbnails are sized generously (radius 28px = 56px virtual diameter),
+ * with an expanded invisible 104px hit target so they are instantly clickable on both desktop and mobile.
  */
 interface SvgTabsProps {
   slides: CircularGallerySlide[];
@@ -228,7 +237,7 @@ function SvgTabsDock({ slides, activeIndex, onSelect, disabled }: SvgTabsProps) 
   const startX = SVG_W / 2 - totalDockWidth / 2;
 
   const getPosX = (i: number) => startX + i * (TAB_R * 2 + TAB_GAP) + TAB_R;
-  const posY = SVG_H - 58;
+  const posY = SVG_H - 64;
 
   return (
     <svg
@@ -243,7 +252,7 @@ function SvgTabsDock({ slides, activeIndex, onSelect, disabled }: SvgTabsProps) 
         return (
           <g
             key={slide.id}
-            className={`pointer-events-auto ${disabled ? "cursor-default" : "cursor-pointer"}`}
+            className={`pointer-events-auto group/tab ${disabled ? "cursor-default" : "cursor-pointer"}`}
             onClick={() => {
               if (!disabled) onSelect(i);
             }}
@@ -266,29 +275,38 @@ function SvgTabsDock({ slides, activeIndex, onSelect, disabled }: SvgTabsProps) 
               className="pointer-events-none"
             />
 
-            {/* Subtle frosted rim around thumbnail */}
+            {/* Dark inner rim for crisp photographic contrast */}
             <circle
               cx={cx}
               cy={posY}
               r={TAB_R}
               fill="none"
-              stroke="rgba(0, 0, 0, 0.4)"
-              strokeWidth="1.5"
+              stroke="rgba(0, 0, 0, 0.45)"
+              strokeWidth="2"
               className="pointer-events-none"
             />
 
-            {/* Active / Inactive Dynamic Ring */}
+            {/* Active / Inactive Dynamic Ring with Luxury Gold Glow */}
             <circle
               cx={cx}
               cy={posY}
-              r={TAB_R + 3.5}
+              r={TAB_R + 4.5}
               fill="none"
-              stroke={isActive ? "#d4af37" : "rgba(255, 255, 255, 0.45)"}
-              strokeWidth={isActive ? "2.5" : "1.5"}
+              stroke={isActive ? "#d4af37" : "rgba(255, 255, 255, 0.4)"}
+              strokeWidth={isActive ? "3.2" : "1.8"}
               style={{
-                filter: isActive ? "drop-shadow(0 0 8px rgba(212, 175, 55, 0.85))" : "none",
+                filter: isActive ? "drop-shadow(0 0 10px rgba(212, 175, 55, 0.95))" : "none",
                 transition: "stroke 0.3s ease, filter 0.3s ease, stroke-width 0.3s ease",
               }}
+            />
+
+            {/* Expanded Invisible Hit Target for Effortless Clickability (104px diameter) */}
+            <circle
+              cx={cx}
+              cy={posY}
+              r={TAB_R + 24}
+              fill="transparent"
+              className="cursor-pointer"
             />
           </g>
         );
@@ -305,6 +323,7 @@ export default function CarouselCircularImageGallery({
   className = "",
 }: CircularImageGalleryProps) {
   const [active, setActive] = useState(defaultIndex);
+  const [prevActive, setPrevActive] = useState<number | null>(null);
   const [inPlace, setInPlace] = useState(defaultIndex);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -314,32 +333,36 @@ export default function CarouselCircularImageGallery({
 
   const total = slides.length;
 
-  const next = useCallback(() => {
-    if (isAnimating) return;
-    setActive((prev) => (prev + 1 >= total ? 0 : prev + 1));
-  }, [isAnimating, total]);
-
-  const prev = useCallback(() => {
-    if (isAnimating) return;
-    setActive((prev) => (prev - 1 < 0 ? total - 1 : prev - 1));
-  }, [isAnimating, total]);
-
-  const select = useCallback(
-    (index: number) => {
-      if (isAnimating || index === active) return;
-      setActive(index);
+  const goToSlide = useCallback(
+    (targetIndex: number) => {
+      if (isAnimating || targetIndex === active) return;
+      setPrevActive(active);
+      setActive(targetIndex);
+      setIsAnimating(true);
     },
     [isAnimating, active]
   );
 
+  const next = useCallback(() => {
+    if (isAnimating) return;
+    const target = (active + 1) % total;
+    goToSlide(target);
+  }, [isAnimating, active, total, goToSlide]);
+
+  const prev = useCallback(() => {
+    if (isAnimating) return;
+    const target = (active - 1 + total) % total;
+    goToSlide(target);
+  }, [isAnimating, active, total, goToSlide]);
+
   const handleInPlace = useCallback((id: number) => {
     setInPlace(id);
-    setIsAnimating(false);
   }, []);
 
-  useEffect(() => {
-    setIsAnimating(true);
-  }, [active]);
+  const handleTransitionComplete = useCallback(() => {
+    setIsAnimating(false);
+    setPrevActive(null);
+  }, []);
 
   // Autoplay handler with 4500ms interval matching Le Thanh's original, paused on hover
   useEffect(() => {
@@ -393,30 +416,61 @@ export default function CarouselCircularImageGallery({
         onTouchEnd={handleTouchEnd}
         className="relative w-full aspect-[16/9] min-h-[240px] rounded-2xl sm:rounded-3xl overflow-hidden border border-[#60c1e5]/20 bg-[#050912] shadow-[0_30px_70px_-15px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(160,224,239,0.15)]"
       >
-        {/* Layer 0: Image Slides with GSAP Circular Clip Path Reveal */}
-        {slides.map((slide, idx) => (
-          <div
-            key={slide.id}
-            className="absolute inset-0 size-full"
-            style={{
-              zIndex: inPlace === idx ? idx : active === idx ? total + 1 : 0,
-            }}
-          >
-            <GalleryImageItem
-              id={idx}
-              total={total}
-              slide={slide}
-              isOpen={active === idx}
-              isInPlace={inPlace === idx}
-              onInPlace={handleInPlace}
-            />
-          </div>
-        ))}
+        {/* Layer 0: Image Slides with Synchronized Role-Based GSAP Circular Clip Path Reveal */}
+        {slides.map((slide, idx) => {
+          let role: SlideRole = "idle";
+          let zIndex = 0;
+
+          if (isAnimating) {
+            if (idx === active) {
+              role = "incoming";
+              zIndex = 20; // Blossoms on top of outgoing
+            } else if (idx === prevActive) {
+              role = "outgoing";
+              // Sits beneath incoming while expanding, then pops to 30 to bounce on top
+              zIndex = inPlace === active ? 30 : 10;
+            } else {
+              role = "idle";
+              zIndex = 0;
+            }
+          } else {
+            if (idx === active) {
+              role = "steady";
+              zIndex = 10;
+            } else {
+              role = "idle";
+              zIndex = 0;
+            }
+          }
+
+          const isVisible = role !== "idle";
+
+          return (
+            <div
+              key={slide.id}
+              className="absolute inset-0 size-full pointer-events-none"
+              style={{
+                zIndex,
+                opacity: isVisible ? 1 : 0,
+                visibility: isVisible ? "visible" : "hidden",
+              }}
+            >
+              <GalleryImageItem
+                id={idx}
+                total={total}
+                slide={slide}
+                role={role}
+                onInPlace={handleInPlace}
+                onTransitionComplete={handleTransitionComplete}
+              />
+            </div>
+          );
+        })}
 
         {/* Layer 1: Subtle Vignette & Deep Bottom Gradient for Clean Editorial Legibility */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-15 bg-gradient-to-t from-[#040812]/95 via-[#040812]/30 to-transparent"
+          className="pointer-events-none absolute inset-0 z-15 bg-gradient-to-t from-[#040812]/95 via-[#040812]/35 to-transparent"
         />
 
         {/* Layer 2: Editorial Meta Overlay (Minimal Top Counter + Bottom Headline & CTA) */}
@@ -431,8 +485,8 @@ export default function CarouselCircularImageGallery({
           </div>
 
           {/* Bottom Row: Title, Description & Action CTA with Generous Clearance above Tabs */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mt-auto pb-14 sm:pb-16">
-            <div className="max-w-xl">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-8 mt-auto pb-16 sm:pb-20">
+            <div className="flex-1 min-w-0 pr-4">
               <h3
                 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white mb-2 leading-tight"
                 style={{
@@ -451,17 +505,19 @@ export default function CarouselCircularImageGallery({
             </div>
 
             {currentSlide?.href && (
-              <ArrowFillButton
-                btnText={currentSlide.actionText || "View Live Site"}
-                href={currentSlide.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="gold"
-                size="md"
-                arrowDirection="up-right"
-                className="pointer-events-auto self-start sm:self-auto shadow-[0_8px_24px_rgba(212,175,55,0.35)]"
-                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-              />
+              <div className="shrink-0 pointer-events-auto">
+                <ArrowFillButton
+                  btnText={currentSlide.actionText || "View Live Site"}
+                  href={currentSlide.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="gold"
+                  size="md"
+                  arrowDirection="up-right"
+                  className="shadow-[0_8px_24px_rgba(212,175,55,0.35)]"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                />
+              </div>
             )}
           </div>
         </div>
@@ -470,7 +526,7 @@ export default function CarouselCircularImageGallery({
         <SvgTabsDock
           slides={slides}
           activeIndex={active}
-          onSelect={select}
+          onSelect={goToSlide}
           disabled={isAnimating}
         />
       </div>

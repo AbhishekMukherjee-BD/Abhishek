@@ -218,7 +218,7 @@ export default function ArrowFillButton({
         className={cn(
           "pointer-events-none absolute inset-0 z-2 flex items-center whitespace-nowrap",
           "text-[var(--btn-fill-text)]",
-          "px-3 pr-[calc(var(--icon-circle)+var(--icon-right)+8px)]",
+          currentSizeClass,
           "[clip-path:inset(var(--circle-inset-y)_var(--icon-right)_var(--circle-inset-y)_calc(100%-var(--icon-right)-var(--icon-circle)))]",
           mounted &&
             "transition-all duration-450 ease-[cubic-bezier(0.785,0.135,0.15,0.86)] motion-reduce:transition-none group-hover:[clip-path:inset(0_0_0_0)] group-hover:text-[var(--btn-fill-text-hover)] group-data-[pressed=true]:[clip-path:inset(0_0_0_0)] group-data-[pressed=true]:text-[var(--btn-fill-text-hover)]"
