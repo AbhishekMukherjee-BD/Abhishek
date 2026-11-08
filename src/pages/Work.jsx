@@ -294,8 +294,14 @@ function Work() {
                             onSelect: () => setOpenFolderId(isOpen ? null : folder.id),
                           },
                           {
-                            label: "View all in GitHub",
-                            onSelect: () => window.open("https://github.com/AbhishekMukherjee-BD", "_blank"),
+                            label: folder.id === "dashboard-templates" ? "Open Directory Hub ↗" : "View all in GitHub",
+                            onSelect: () =>
+                              window.open(
+                                folder.id === "dashboard-templates"
+                                  ? "https://dashboard-templates-opal.vercel.app"
+                                  : "https://github.com/AbhishekMukherjee-BD",
+                                "_blank"
+                              ),
                           },
                         ]}
                         onFileSelect={(file) => {
