@@ -757,8 +757,8 @@ export default function GlassFolder({
     else if (e.key === "Tab") setMenuOpen(false)
   }
 
-  const start = Math.max(0, files.length - MAX_VISIBLE)
-  const visible = files.slice(start)
+  const start = 0
+  const visible = files.slice(0, MAX_VISIBLE)
   const count = files.length
   const metaLine = meta ?? count + (count === 1 ? " item" : " items")
 
@@ -1009,7 +1009,7 @@ const GF_CSS = `
   isolation: isolate;
 }
 .gf-root[data-tone="dark"] { --gf-ink: #f5f5f7; --gf-ink-soft: rgba(245, 245, 247, .58); }
-.gf-root:hover, .gf-root:focus-within { --gf-hinge: -11deg; --gf-lift: -34px; --gf-spread: 8px; --gf-fan: 1.4deg; --gf-stack: 10px; }
+.gf-root:hover, .gf-root:focus-within { --gf-hinge: -11deg; --gf-lift: -40px; --gf-spread: 8px; --gf-fan: 1.4deg; --gf-stack: 10px; }
 .gf-root[data-open] { --gf-hinge: -24deg; --gf-lift: -96px; --gf-spread: 40px; --gf-fan: 5deg; --gf-stack: 30px; }
 
 /* ── Unified Single-Motion Physical Emergence for Tumble Deck ── */
