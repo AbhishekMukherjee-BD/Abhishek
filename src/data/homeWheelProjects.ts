@@ -15,9 +15,9 @@
  */
 
 export interface WheelProjectItem {
-  /** Display title of the project (e.g., "Patent Risk Analysis SaaS") */
+  /** Display title of the project (e.g., "SSRINI Luxury Handcrafts") */
   title: string;
-  /** Subtitle / discipline badge (e.g., "AI & Automation", "Healthcare", "Web Dev") */
+  /** Subtitle / discipline badge (e.g., "Fine Art & E-Commerce") */
   category: string;
   /** High-resolution image path in public/work/01-main-page/ */
   image: string;
@@ -27,57 +27,21 @@ export interface WheelProjectItem {
 
 export const wheelProjects: WheelProjectItem[] = [
   {
-    title: "Patent Risk Analysis SaaS",
-    category: "AI & Automation",
-    image: "/work/01-main-page/01-patent-risk.svg",
-    href: "https://github.com/AbhishekMukherjee-BD",
-  },
-  {
-    title: "AI Risk Report Dashboard",
-    category: "Analytics & Canvas",
-    image: "/work/01-main-page/02-risk-dashboard.svg",
-    href: "https://github.com/AbhishekMukherjee-BD",
-  },
-  {
-    title: "Artisan Cafe Experience",
-    category: "Web Dev",
-    image: "/work/01-main-page/03-artisan-cafe.jpg",
-    href: "https://cafe-webdev.vercel.app",
-  },
-  {
-    title: "California Medical Clinic",
-    category: "Healthcare",
-    image: "/work/01-main-page/04-california-clinic.jpg",
-    href: "https://california-medical-clinic.vercel.app",
-  },
-  {
-    title: "AI Chatbot & Booking Agent",
-    category: "AI & Automation",
-    image: "/work/01-main-page/05-ai-chatbot.svg",
-    href: "https://github.com/AbhishekMukherjee-BD",
-  },
-  {
-    title: "Celestial Restaurant",
-    category: "Web Dev",
-    image: "/work/01-main-page/06-celestial-restaurant.jpg",
-    href: "https://celestial-cafe.vercel.app",
-  },
-  {
-    title: "Dental Clinic Healthcare Portal",
-    category: "Healthcare",
-    image: "/work/01-main-page/07-dental-clinic.svg",
-    href: "https://github.com/AbhishekMukherjee-BD",
-  },
-  {
-    title: "Autonomous Report Engine",
-    category: "AI & Automation",
-    image: "/work/01-main-page/08-auto-report.svg",
-    href: "https://github.com/AbhishekMukherjee-BD",
-  },
-  {
     title: "SSRINI Luxury Handcrafts",
-    category: "E-Commerce",
-    image: "/work/01-main-page/09-ssrini-handcraft.png",
+    category: "Fine Art & E-Commerce",
+    image: "/work/01-main-page/01-ssrini-hero.png",
+    href: "https://ssrinihandcraftecom.vercel.app/ecom/",
+  },
+  {
+    title: "SSRINI Bespoke Collections",
+    category: "Interactive Showcase",
+    image: "/work/01-main-page/02-ssrini-collections.png",
+    href: "https://ssrinihandcraftecom.vercel.app/ecom/",
+  },
+  {
+    title: "SSRINI Artisanal Catalog",
+    category: "Digital Storefront",
+    image: "/work/01-main-page/03-ssrini-gallery.png",
     href: "https://ssrinihandcraftecom.vercel.app/ecom/",
   },
 ];
