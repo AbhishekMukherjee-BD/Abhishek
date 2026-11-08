@@ -30,9 +30,9 @@ export interface CircularImageGalleryProps {
 // 16:9 Virtual Geometry Coordinates for high-resolution vector clipping
 const SVG_W = 1600;
 const SVG_H = 900;
-const TAB_R = 28;      // Generous, luxury tactile thumbnail radius (~46px on desktop)
-const TAB_GAP = 32;    // Architectural spacing between tabs
-const BIG_R = 3600;    // Full canvas span
+const TAB_R = 32;       // Scaled virtual dock radius
+const TAB_GAP = 36;     // Proportional dock gap
+const FULL_R = 2400;    // Expands 1500px past every edge of 1600x900 canvas, eliminating any black bar
 
 type SlideRole = "steady" | "incoming" | "outgoing" | "idle";
 
@@ -47,9 +47,8 @@ interface GalleryItemProps {
 
 /**
  * 1:1 Implementation of Le Thanh's (@minhxthanh) signature circular image reveal.
- * Explicitly roles each slide:
- * - incoming: starts at its thumbnail dot -> rises to center (0.2s power3.inOut) -> sweeps offscreen left (0.4s power4.in).
- * - outgoing: waits 0.6s -> shrinks from offscreen right to center (0.4s power4.out) -> arcs down with rubber-ball bounce physics (1.0s bounce.out).
+ * - incoming: starts at its thumbnail dot -> rises to center (0.2s power3.inOut) -> blossoms full-bleed with photographic zoom (0.4s power4.in).
+ * - outgoing: waits 0.6s -> shrinks from full-bleed to center (0.35s power4.out) -> arcs down with rubber-ball bounce physics (1.0s bounce.out).
  * - idle: cleanly hidden at zIndex 0 with 0 opacity so it never blocks or desyncs other slides.
  */
 function GalleryImageItem({
@@ -61,6 +60,7 @@ function GalleryImageItem({
   onTransitionComplete,
 }: GalleryItemProps) {
   const circleRef = useRef<SVGCircleElement | null>(null);
+  const imageRef = useRef<SVGImageElement | null>(null);
 
   // Position calculations matching the dock coordinates exactly
   const getDockStartX = useCallback(() => {
@@ -72,7 +72,7 @@ function GalleryImageItem({
     const startX = getDockStartX();
     return {
       cx: startX + id * (TAB_R * 2 + TAB_GAP) + TAB_R,
-      cy: SVG_H - 64,
+      cy: SVG_H - 76,
       r: TAB_R,
     };
   }, [id, getDockStartX]);
@@ -90,45 +90,53 @@ function GalleryImageItem({
     return {
       cx: SVG_W / 2,
       cy: SVG_H / 2,
-      r: TAB_R * 6.5,
+      r: 180,
     };
   }, []);
 
-  const getPosEnd = useCallback(() => {
+  const getPosFull = useCallback(() => {
     return {
-      cx: SVG_W / 2 - BIG_R,
+      cx: SVG_W / 2,
       cy: SVG_H / 2,
-      r: BIG_R,
-    };
-  }, []);
-
-  const getPosStart = useCallback(() => {
-    return {
-      cx: SVG_W / 2 + BIG_R,
-      cy: SVG_H / 2,
-      r: BIG_R,
+      r: FULL_R,
     };
   }, []);
 
   useEffect(() => {
     if (!circleRef.current) return;
     const el = circleRef.current;
+    const img = imageRef.current;
     const transformOrigin = { transformOrigin: "center center" };
 
     if (role === "steady") {
       gsap.killTweensOf(el);
-      gsap.set(el, { ...transformOrigin, ...getPosEnd() });
+      if (img) gsap.killTweensOf(img);
+      gsap.set(el, { ...transformOrigin, ...getPosFull() });
+      if (img) gsap.set(img, { scale: 1, transformOrigin: "center center" });
       return;
     }
 
     if (role === "idle") {
       gsap.killTweensOf(el);
+      if (img) gsap.killTweensOf(img);
       gsap.set(el, { ...transformOrigin, ...getPosSmall() });
+      if (img) gsap.set(img, { scale: 1, transformOrigin: "center center" });
       return;
     }
 
     if (role === "incoming") {
       gsap.killTweensOf(el);
+      if (img) gsap.killTweensOf(img);
+
+      // Silky zoom effect: photo breathes in from 1.08x to 1.0x as the circle blossoms
+      if (img) {
+        gsap.fromTo(
+          img,
+          { scale: 1.08, transformOrigin: "center center" },
+          { scale: 1.0, duration: 0.75, ease: "power2.out" }
+        );
+      }
+
       gsap
         .timeline()
         .set(el, { ...transformOrigin, ...getPosSmall() })
@@ -140,7 +148,7 @@ function GalleryImageItem({
         })
         .to(el, {
           ...transformOrigin,
-          ...getPosEnd(),
+          ...getPosFull(),
           duration: 0.4,
           ease: "power4.in",
           onComplete: () => {
@@ -152,14 +160,16 @@ function GalleryImageItem({
 
     if (role === "outgoing") {
       gsap.killTweensOf(el);
+      if (img) gsap.killTweensOf(img);
+
       gsap
         .timeline()
-        .set(el, { ...transformOrigin, ...getPosStart() })
+        .set(el, { ...transformOrigin, ...getPosFull() })
         .to(el, {
           ...transformOrigin,
           ...getPosCenter(),
           delay: 0.6,
-          duration: 0.4,
+          duration: 0.35,
           ease: "power4.out",
         })
         .to(el, {
@@ -184,8 +194,7 @@ function GalleryImageItem({
     getPosSmall,
     getPosSmallAbove,
     getPosCenter,
-    getPosEnd,
-    getPosStart,
+    getPosFull,
   ]);
 
   const isRect = role === "steady";
@@ -202,115 +211,18 @@ function GalleryImageItem({
         <clipPath id={`clip_circle_${id}`}>
           <circle ref={circleRef} cx={SVG_W / 2} cy={SVG_H / 2} r={TAB_R} />
         </clipPath>
-        <clipPath id={`clip_rect_${id}`}>
-          <rect width={SVG_W} height={SVG_H} rx="24" />
-        </clipPath>
       </defs>
 
-      <g clipPath={`url(#${isRect ? `clip_rect_${id}` : `clip_circle_${id}`})`}>
+      <g clipPath={isRect ? undefined : `url(#clip_circle_${id})`}>
         <image
+          ref={imageRef}
           href={slide.image}
           width={SVG_W}
           height={SVG_H}
           preserveAspectRatio="xMidYMid slice"
+          className="size-full object-cover"
         />
       </g>
-    </svg>
-  );
-}
-
-/**
- * Native SVG Circular Tabs Dock
- * Thumbnails are sized generously (radius 28px = 56px virtual diameter),
- * with an expanded invisible 104px hit target so they are instantly clickable on both desktop and mobile.
- */
-interface SvgTabsProps {
-  slides: CircularGallerySlide[];
-  activeIndex: number;
-  onSelect: (index: number) => void;
-  disabled: boolean;
-}
-
-function SvgTabsDock({ slides, activeIndex, onSelect, disabled }: SvgTabsProps) {
-  const total = slides.length;
-  const totalDockWidth = total * (TAB_R * 2 + TAB_GAP) - TAB_GAP;
-  const startX = SVG_W / 2 - totalDockWidth / 2;
-
-  const getPosX = (i: number) => startX + i * (TAB_R * 2 + TAB_GAP) + TAB_R;
-  const posY = SVG_H - 64;
-
-  return (
-    <svg
-      viewBox={`0 0 ${SVG_W} ${SVG_H}`}
-      preserveAspectRatio="xMidYMid slice"
-      className="absolute inset-0 size-full pointer-events-none z-30"
-    >
-      {slides.map((slide, i) => {
-        const isActive = activeIndex === i;
-        const cx = getPosX(i);
-
-        return (
-          <g
-            key={slide.id}
-            className={`pointer-events-auto group/tab ${disabled ? "cursor-default" : "cursor-pointer"}`}
-            onClick={() => {
-              if (!disabled) onSelect(i);
-            }}
-          >
-            <defs>
-              <clipPath id={`tab_thumb_${i}_clip`}>
-                <circle cx={cx} cy={posY} r={TAB_R} />
-              </clipPath>
-            </defs>
-
-            {/* Thumbnail Image inside circle */}
-            <image
-              x={cx - TAB_R}
-              y={posY - TAB_R}
-              width={TAB_R * 2}
-              height={TAB_R * 2}
-              href={slide.image}
-              clipPath={`url(#tab_thumb_${i}_clip)`}
-              preserveAspectRatio="xMidYMid slice"
-              className="pointer-events-none"
-            />
-
-            {/* Dark inner rim for crisp photographic contrast */}
-            <circle
-              cx={cx}
-              cy={posY}
-              r={TAB_R}
-              fill="none"
-              stroke="rgba(0, 0, 0, 0.45)"
-              strokeWidth="2"
-              className="pointer-events-none"
-            />
-
-            {/* Active / Inactive Dynamic Ring with Luxury Gold Glow */}
-            <circle
-              cx={cx}
-              cy={posY}
-              r={TAB_R + 4.5}
-              fill="none"
-              stroke={isActive ? "#d4af37" : "rgba(255, 255, 255, 0.4)"}
-              strokeWidth={isActive ? "3.2" : "1.8"}
-              style={{
-                filter: isActive ? "drop-shadow(0 0 10px rgba(212, 175, 55, 0.95))" : "none",
-                transition: "stroke 0.3s ease, filter 0.3s ease, stroke-width 0.3s ease",
-              }}
-            />
-
-            {/* Expanded Invisible Hit Target for Effortless Clickability (104px diameter) */}
-            <circle
-              cx={cx}
-              cy={posY}
-              r={TAB_R + 24}
-              fill="transparent"
-              className="cursor-pointer"
-            />
-          </g>
-        );
-      })}
     </svg>
   );
 }
@@ -410,11 +322,11 @@ export default function CarouselCircularImageGallery({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* ── 16:9 Widescreen Luxury Framing Stage ── */}
+      {/* ── Responsive Luxury Framing Stage (Optimized across Mobile, Foldables, MacBooks & 4K) ── */}
       <div
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        className="relative w-full aspect-[16/9] min-h-[240px] rounded-2xl sm:rounded-3xl overflow-hidden border border-[#60c1e5]/20 bg-[#050912] shadow-[0_30px_70px_-15px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(160,224,239,0.15)]"
+        className="relative w-full aspect-[4/3] xs:aspect-[16/10] md:aspect-[16/9] min-h-[360px] sm:min-h-[420px] md:min-h-[460px] lg:min-h-[500px] rounded-2xl sm:rounded-3xl overflow-hidden border border-[#60c1e5]/20 bg-[#050912] shadow-[0_30px_70px_-15px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(160,224,239,0.15)]"
       >
         {/* Layer 0: Image Slides with Synchronized Role-Based GSAP Circular Clip Path Reveal */}
         {slides.map((slide, idx) => {
@@ -467,10 +379,10 @@ export default function CarouselCircularImageGallery({
           );
         })}
 
-        {/* Layer 1: Subtle Vignette & Deep Bottom Gradient for Clean Editorial Legibility */}
+        {/* Layer 1: Subtle Vignette & Natural Contrast Overlay (No Fake Black Bars) */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-15 bg-gradient-to-t from-[#040812]/95 via-[#040812]/35 to-transparent"
+          className="pointer-events-none absolute inset-0 z-15 bg-gradient-to-t from-black/70 via-black/20 to-transparent"
         />
 
         {/* Layer 2: Editorial Meta Overlay (Minimal Top Counter + Bottom Headline & CTA) */}
@@ -485,19 +397,19 @@ export default function CarouselCircularImageGallery({
           </div>
 
           {/* Bottom Row: Title, Description & Action CTA with Generous Clearance above Tabs */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-8 mt-auto pb-16 sm:pb-20">
-            <div className="flex-1 min-w-0 pr-4">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-8 mt-auto pb-16 sm:pb-20 md:pb-24">
+            <div className="flex-1 min-w-0 pr-2 sm:pr-4">
               <h3
-                className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white mb-2 leading-tight"
+                className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-white mb-1.5 sm:mb-2 leading-tight"
                 style={{
                   fontFamily: "'Space Grotesk', sans-serif",
-                  textShadow: "0 2px 24px rgba(0,0,0,0.8)",
+                  textShadow: "0 2px 20px rgba(0,0,0,0.9)",
                 }}
               >
                 {currentSlide?.title}
               </h3>
               <p
-                className="text-xs sm:text-sm text-white/75 line-clamp-2 leading-relaxed"
+                className="text-xs sm:text-sm text-white/80 line-clamp-2 leading-relaxed max-w-xl"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 {currentSlide?.description}
@@ -505,7 +417,7 @@ export default function CarouselCircularImageGallery({
             </div>
 
             {currentSlide?.href && (
-              <div className="shrink-0 pointer-events-auto">
+              <div className="shrink-0 pointer-events-auto self-start sm:self-auto">
                 <ArrowFillButton
                   btnText={currentSlide.actionText || "View Live Site"}
                   href={currentSlide.href}
@@ -522,13 +434,38 @@ export default function CarouselCircularImageGallery({
           </div>
         </div>
 
-        {/* Layer 3: 1:1 Synchronized Native SVG Circular Thumbnail Tabs Dock */}
-        <SvgTabsDock
-          slides={slides}
-          activeIndex={active}
-          onSelect={goToSlide}
-          disabled={isAnimating}
-        />
+        {/* Layer 3: Tactile & High-Contrast Responsive HTML Thumbnail Dock */}
+        <div className="absolute bottom-3 sm:bottom-4 md:bottom-5 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 sm:gap-4 md:gap-5 select-none pointer-events-auto">
+          {slides.map((slide, i) => {
+            const isActive = active === i;
+
+            return (
+              <button
+                key={slide.id}
+                type="button"
+                onClick={() => goToSlide(i)}
+                disabled={isAnimating}
+                aria-label={`Switch to ${slide.title}`}
+                className="group/tab relative p-1 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer outline-none transition-transform duration-300 active:scale-90 disabled:cursor-default"
+              >
+                <div
+                  className={`w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full overflow-hidden transition-all duration-300 ${
+                    isActive
+                      ? "ring-2.5 ring-[#d4af37] ring-offset-2 ring-offset-[#070d18] shadow-[0_0_18px_rgba(212,175,55,0.85)] scale-105"
+                      : "ring-1.5 ring-white/40 hover:ring-white/90 opacity-70 hover:opacity-100 hover:scale-110"
+                  }`}
+                >
+                  <img
+                    src={slide.image}
+                    alt={slide.title}
+                    className="size-full object-cover pointer-events-none"
+                    loading="eager"
+                  />
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* ── Left Navigation Arrow (Refined Translucent Obsidian Glass) ── */}
@@ -537,11 +474,11 @@ export default function CarouselCircularImageGallery({
         onClick={prev}
         disabled={isAnimating}
         aria-label="Previous slide"
-        className="cursor-pointer absolute left-2 sm:-left-6 lg:-left-7 top-1/2 -translate-y-1/2 z-35 flex items-center justify-center w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-[#050912]/80 hover:bg-[#0a1220] active:scale-95 transition-all duration-300 border border-white/20 hover:border-[#d4af37]/60 text-white hover:text-[#d4af37] shadow-[0_10px_30px_rgba(0,0,0,0.7)] backdrop-blur-md disabled:opacity-30 disabled:cursor-not-allowed group/arrow"
+        className="cursor-pointer absolute left-2 sm:left-3 md:-left-6 lg:-left-7 top-1/2 -translate-y-1/2 z-35 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-13 md:h-13 rounded-full bg-[#050912]/80 hover:bg-[#0a1220] active:scale-95 transition-all duration-300 border border-white/20 hover:border-[#d4af37]/60 text-white hover:text-[#d4af37] shadow-[0_10px_30px_rgba(0,0,0,0.7)] backdrop-blur-md disabled:opacity-30 disabled:cursor-not-allowed group/arrow"
       >
         <svg
-          width="22"
-          height="22"
+          width="20"
+          height="20"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -560,11 +497,11 @@ export default function CarouselCircularImageGallery({
         onClick={next}
         disabled={isAnimating}
         aria-label="Next slide"
-        className="cursor-pointer absolute right-2 sm:-right-6 lg:-right-7 top-1/2 -translate-y-1/2 z-35 flex items-center justify-center w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-[#050912]/80 hover:bg-[#0a1220] active:scale-95 transition-all duration-300 border border-white/20 hover:border-[#d4af37]/60 text-white hover:text-[#d4af37] shadow-[0_10px_30px_rgba(0,0,0,0.7)] backdrop-blur-md disabled:opacity-30 disabled:cursor-not-allowed group/arrow"
+        className="cursor-pointer absolute right-2 sm:right-3 md:-right-6 lg:-right-7 top-1/2 -translate-y-1/2 z-35 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-13 md:h-13 rounded-full bg-[#050912]/80 hover:bg-[#0a1220] active:scale-95 transition-all duration-300 border border-white/20 hover:border-[#d4af37]/60 text-white hover:text-[#d4af37] shadow-[0_10px_30px_rgba(0,0,0,0.7)] backdrop-blur-md disabled:opacity-30 disabled:cursor-not-allowed group/arrow"
       >
         <svg
-          width="22"
-          height="22"
+          width="20"
+          height="20"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
