@@ -267,7 +267,7 @@ function Work() {
 
                 return (
                   <div
-                    key={folder.id}
+                    key={`${folder.id}-${folder.files.length}`}
                     className={`w-full max-w-[360px] flex flex-col items-center group/folder relative transition-all duration-300 ${
                       isOpen ? "z-40" : "z-10"
                     }`}

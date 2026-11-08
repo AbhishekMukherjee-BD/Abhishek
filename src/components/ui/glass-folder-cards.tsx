@@ -562,6 +562,13 @@ export default function GlassFolder({
   const [dropped, setDropped] = React.useState<number | null>(null)
   const [bump, setBump] = React.useState(0)
 
+  // Keep internal files and ids in sync whenever incoming files prop changes
+  React.useEffect(() => {
+    setFiles(initialFiles)
+    ids.current = initialFiles.map((_, i) => i)
+    nextId.current = initialFiles.length
+  }, [initialFiles])
+
   const [openState, setOpenState] = React.useState(defaultOpen)
   const open = openProp ?? openState
   const setOpen = React.useCallback(
@@ -576,14 +583,15 @@ export default function GlassFolder({
 
   const defaultTumbleCards: TumbleCardItem[] = React.useMemo(() => {
     if (tumbleCards && tumbleCards.length > 0) return tumbleCards
-    return (files || []).map((f) => ({
+    const sourceFiles = initialFiles && initialFiles.length > 0 ? initialFiles : files
+    return (sourceFiles || []).map((f) => ({
       src: f.image || "",
       alt: f.name,
       title: f.name,
       meta: f.meta,
       href: f.href,
     }))
-  }, [tumbleCards, files])
+  }, [tumbleCards, files, initialFiles])
 
   const handleCloseTumble = React.useCallback(() => {
     if (tumbleStage === "rest" || tumbleStage === "closing") return
@@ -865,7 +873,7 @@ export default function GlassFolder({
                   "--gf-depth": visible.length - 1 - v,
                   "--gf-jx": ((jitter() - 0.5) * 10).toFixed(2) + "px",
                   "--gf-jr": ((jitter() - 0.5) * 3.2).toFixed(2) + "deg",
-                  zIndex: v + 1,
+                  zIndex: visible.length - v,
                 } as React.CSSProperties,
                 onAnimationEnd: id === dropped ? () => setDropped(null) : undefined,
               }

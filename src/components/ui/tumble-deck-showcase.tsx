@@ -214,6 +214,8 @@ export default function TumbleDeckShowcase({
   useLayoutEffect(() => {
     activeIndicesRef.current = [];
     dotRefs.current = [];
+    posRef.current = { current: 0, target: 0 };
+    setActiveCardIndex(0);
   }, [cards]);
 
   // Fit and perspective calculations based on container dimensions

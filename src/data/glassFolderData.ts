@@ -154,7 +154,7 @@ export const categoryFolders: CategoryFolder[] = [
     tone: "light",
     art: "glacier",
     seed: 5,
-    meta: "1 Live Portal",
+    meta: "2 Live Portals",
     appearDelay: 360,
     files: [
       {
@@ -162,6 +162,12 @@ export const categoryFolders: CategoryFolder[] = [
         meta: "Live Portal · Scheduling",
         image: "/work/03-work-library/02-healthcare-clinics/01-california-medical-clinic.webp",
         href: "https://california-medical-clinic.vercel.app",
+      },
+      {
+        name: "Apex Peak Roofing",
+        meta: "Architectural Roofing · High-Conversion Portal",
+        image: "/work/03-work-library/02-healthcare-clinics/02-apex-peak-roofing.webp",
+        href: "https://apex-peak-roofing.whop.site",
       },
     ],
   },
@@ -175,14 +181,38 @@ export const categoryFolders: CategoryFolder[] = [
     tone: "dark",
     art: "dusk",
     seed: 7,
-    meta: "1 Live Experience",
+    meta: "5 Live Experiences",
     appearDelay: 480,
     files: [
       {
         name: "ASP Kitchen & Dining",
-        meta: "Continental Kitchen · Online Ordering",
-        image: "/work/03-work-library/03-restaurants-dining/01-asp-kitchen.webp",
+        meta: "Continental Dining · Brand Showcase",
+        image: "/work/03-work-library/03-restaurants-dining/01-asp-kitchen-dining.webp",
         href: "https://asp-cafe.vercel.app",
+      },
+      {
+        name: "California Medical Clinic",
+        meta: "Healthcare & Telehealth · Patient Portal",
+        image: "/work/03-work-library/03-restaurants-dining/02-california-medical-clinic.webp",
+        href: "https://california-medical-clinic.vercel.app",
+      },
+      {
+        name: "ASP Kitchen Continental Menu",
+        meta: "Interactive Menu & Pricing · Reservation Lander",
+        image: "/work/03-work-library/03-restaurants-dining/03-asp-kitchen-menu.webp",
+        href: "https://asp-cafe.vercel.app",
+      },
+      {
+        name: "ASP Cafe Digital Experience",
+        meta: "Hospitality Storytelling · Online Orders",
+        image: "/work/03-work-library/03-restaurants-dining/04-asp-cafe-behala.webp",
+        href: "https://cafe-webdev.vercel.app",
+      },
+      {
+        name: "ASP Cafe Beverages & Treats",
+        meta: "Specialty Beverages · Fast Checkout",
+        image: "/work/03-work-library/03-restaurants-dining/05-asp-cafe-beverages.webp",
+        href: "https://cafe-webdev.vercel.app",
       },
     ],
   },
