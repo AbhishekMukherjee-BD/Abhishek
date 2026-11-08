@@ -126,6 +126,15 @@ export default function TumbleDeckShowcase({
   const metricsRef = useRef({ h: 180, gap: 42 });
   const [activeCardIndex, setActiveCardIndex] = useState(0);
 
+  const sliderTrackRef = useRef<HTMLDivElement>(null);
+  const sliderThumbRef = useRef<HTMLDivElement>(null);
+  const sliderFillRef = useRef<HTMLDivElement>(null);
+  const [isDraggingSlider, setIsDraggingSlider] = useState(false);
+
+  const animIdRef = useRef<number | null>(null);
+  const settleTimerRef = useRef<any>(null);
+  const isSettlingRef = useRef(false);
+
   const cardCount = cards.length;
   const poolSize = cardCount ? depth + 4 : 0;
 
@@ -136,7 +145,15 @@ export default function TumbleDeckShowcase({
     const baseIndex = Math.floor(curPos) - 2;
 
     const roundedIdx = wrap(Math.round(curPos), cardCount);
-    setActiveCardIndex(roundedIdx);
+    setActiveCardIndex((prev) => (prev !== roundedIdx ? roundedIdx : prev));
+
+    // Update Slider track & thumb directly for 60fps smoothness without re-render latency
+    if (sliderThumbRef.current && sliderFillRef.current && cardCount > 1) {
+      const normalized = (wrap(curPos, cardCount) / (cardCount - 1)) * 100;
+      const clampedPercent = Math.max(0, Math.min(100, normalized));
+      sliderThumbRef.current.style.left = `${clampedPercent}%`;
+      sliderFillRef.current.style.width = `${clampedPercent}%`;
+    }
 
     cardRefs.current.forEach((cardEl, poolIdx) => {
       const imgEl = imgRefs.current[poolIdx];
@@ -207,54 +224,125 @@ export default function TumbleDeckShowcase({
     return () => ro.disconnect();
   }, [aspect, height, renderFrame]);
 
-  // Inertial smooth scroll & drag ticker
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root || cardCount === 0) return;
-
-    let animId: number | null = null;
-    let settleTimer: any = null;
-    let isSettling = false;
-
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+  const startInertia = useCallback(() => {
+    if (isSettlingRef.current) return;
+    isSettlingRef.current = true;
 
     const updateInertia = () => {
       const diff = posRef.current.target - posRef.current.current;
-      // Exponential smoothing factor for velvety motion (no jerk)
-      posRef.current.current += diff * 0.12;
+      posRef.current.current += diff * 0.14;
 
       if (Math.abs(diff) < 0.001) {
         posRef.current.current = posRef.current.target;
-        isSettling = false;
-        animId = null;
+        isSettlingRef.current = false;
+        animIdRef.current = null;
       } else {
-        animId = requestAnimationFrame(updateInertia);
+        animIdRef.current = requestAnimationFrame(updateInertia);
       }
       renderFrame();
     };
 
-    const pushTarget = (newTarget: number) => {
+    animIdRef.current = requestAnimationFrame(updateInertia);
+  }, [renderFrame]);
+
+  const pushTarget = useCallback(
+    (newTarget: number, immediate: boolean = false) => {
       posRef.current.target = newTarget;
-      if (prefersReducedMotion) {
+      const prefersReducedMotion =
+        typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (prefersReducedMotion || immediate) {
         posRef.current.current = newTarget;
         renderFrame();
-      } else if (!isSettling) {
-        isSettling = true;
-        animId = requestAnimationFrame(updateInertia);
+      } else if (!isSettlingRef.current) {
+        startInertia();
       }
-    };
+    },
+    [renderFrame, startInertia]
+  );
 
-    const settleToNearest = (dir: number = 0) => {
+  const settleToNearest = useCallback(
+    (dir: number = 0) => {
       const cur = posRef.current.target;
       let target = Math.round(cur);
       if (dir > 0) target = Math.floor(cur + 0.65);
       else if (dir < 0) target = Math.ceil(cur - 0.65);
       pushTarget(target);
-    };
+    },
+    [pushTarget]
+  );
 
-    // Wheel listener
+  // Slider Drag & Scrub Mechanics
+  const calculateTargetFromPointer = useCallback(
+    (clientX: number) => {
+      const track = sliderTrackRef.current;
+      if (!track || cardCount <= 1) return;
+      const rect = track.getBoundingClientRect();
+      const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      const targetCardIdx = ratio * (cardCount - 1);
+
+      const curPos = posRef.current.current;
+      const currentRev = Math.floor(curPos / cardCount) * cardCount;
+      pushTarget(currentRev + targetCardIdx, false);
+    },
+    [cardCount, pushTarget]
+  );
+
+  const onSliderPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingSlider(true);
+    e.currentTarget.setPointerCapture(e.pointerId);
+    calculateTargetFromPointer(e.clientX);
+  };
+
+  const onSliderPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDraggingSlider) return;
+    e.preventDefault();
+    e.stopPropagation();
+    calculateTargetFromPointer(e.clientX);
+  };
+
+  const onSliderPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDraggingSlider) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingSlider(false);
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {}
+    settleToNearest();
+  };
+
+  const goToCard = (idx: number, e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    const curPos = posRef.current.current;
+    const currentRev = Math.floor(curPos / cardCount) * cardCount;
+    pushTarget(currentRev + idx);
+  };
+
+  const prevCard = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    pushTarget(Math.round(posRef.current.target) - 1);
+  };
+
+  const nextCard = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    pushTarget(Math.round(posRef.current.target) + 1);
+  };
+
+  // Inertial smooth scroll & drag ticker (keeps current scroll interaction 100% active)
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || cardCount === 0) return;
+
+    // Wheel listener (Existing Scroll Interaction Preserved)
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       e.stopPropagation();
@@ -264,8 +352,8 @@ export default function TumbleDeckShowcase({
 
       pushTarget(posRef.current.target + normalizedDelta);
 
-      clearTimeout(settleTimer);
-      settleTimer = setTimeout(() => {
+      clearTimeout(settleTimerRef.current);
+      settleTimerRef.current = setTimeout(() => {
         settleToNearest(Math.sign(delta));
       }, 160);
     };
@@ -283,7 +371,7 @@ export default function TumbleDeckShowcase({
         lastDir: 0,
       };
       isDragging = false;
-      clearTimeout(settleTimer);
+      clearTimeout(settleTimerRef.current);
     };
 
     const onPointerMove = (e: PointerEvent) => {
@@ -325,26 +413,24 @@ export default function TumbleDeckShowcase({
     renderFrame();
 
     return () => {
-      clearTimeout(settleTimer);
-      if (animId) cancelAnimationFrame(animId);
+      clearTimeout(settleTimerRef.current);
+      if (animIdRef.current) cancelAnimationFrame(animIdRef.current);
       root.removeEventListener("wheel", onWheel);
       root.removeEventListener("pointerdown", onPointerDown);
       root.removeEventListener("pointermove", onPointerMove);
       root.removeEventListener("pointerup", onPointerUp);
       root.removeEventListener("pointercancel", onPointerUp);
     };
-  }, [cardCount, scrollPerCard, renderFrame]);
+  }, [cardCount, scrollPerCard, renderFrame, pushTarget, settleToNearest]);
 
   // Keyboard navigation
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === " ") {
       e.preventDefault();
-      posRef.current.target = Math.round(posRef.current.target) + 1;
-      renderFrame();
+      pushTarget(Math.round(posRef.current.target) + 1);
     } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
       e.preventDefault();
-      posRef.current.target = Math.round(posRef.current.target) - 1;
-      renderFrame();
+      pushTarget(Math.round(posRef.current.target) - 1);
     } else if (e.key === "Escape" && onClose) {
       e.preventDefault();
       onClose();
@@ -463,56 +549,132 @@ export default function TumbleDeckShowcase({
         ))}
       </div>
 
-      {/* ── Frosted Glass Info Bar (Bottom) ── */}
+      {/* ── Frosted Glass Info & Interactive Slider Scrubber Bar (Bottom) ── */}
       {currentCard && (
         <div
-          className={`absolute bottom-2 left-2 right-2 sm:bottom-4 sm:left-4 sm:right-4 z-20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl pointer-events-auto transition-all duration-500 ease-out ${
+          className={`absolute bottom-2 left-2 right-2 sm:bottom-3 sm:left-3 sm:right-3 z-20 flex flex-col gap-2 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl pointer-events-auto transition-all duration-500 ease-out ${
             isDeckOpen
               ? "opacity-100 translate-y-0 delay-300"
               : "opacity-0 translate-y-3 pointer-events-none"
           }`}
           style={{
-            background: "linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.42) 42%, rgba(252, 252, 252, 0.72) 100%)",
-            WebkitBackdropFilter: "blur(22px) saturate(1.5)",
-            backdropFilter: "blur(22px) saturate(1.5)",
-            border: "1px solid rgba(255, 255, 255, 0.35)",
-            boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 0 0 0.5px rgba(0, 0, 0, 0.06), 0 10px 30px -5px rgba(0, 0, 0, 0.2)",
+            background: "linear-gradient(180deg, rgba(10, 18, 32, 0.92) 0%, rgba(6, 11, 20, 0.97) 100%)",
+            WebkitBackdropFilter: "blur(24px) saturate(1.8)",
+            backdropFilter: "blur(24px) saturate(1.8)",
+            border: "1px solid rgba(96, 193, 229, 0.3)",
+            boxShadow: "inset 0 1px 0 rgba(160, 224, 239, 0.25), 0 18px 40px -10px rgba(0, 0, 0, 0.75)",
           }}
         >
-          <div className="flex flex-col">
-            <h4
-              className="text-sm font-semibold tracking-tight flex items-center gap-2"
-              style={{ fontFamily: "'Space Grotesk', sans-serif", color: "#141416" }}
+          {/* ── Row 1: Interactive Slider Scrubber Control Ribbon ── */}
+          <div className="flex items-center gap-2 w-full select-none">
+            {/* Step Prev Button */}
+            <button
+              type="button"
+              onClick={prevCard}
+              aria-label="Previous card in stack"
+              className="shrink-0 cursor-pointer flex items-center justify-center w-6 h-6 rounded-md bg-white/10 hover:bg-[#60c1e5]/25 active:scale-90 transition-all text-[#60c1e5] hover:text-[#d4af37]"
             >
-              <span>{currentCard.title || currentCard.alt}</span>
-            </h4>
-            {currentCard.meta && (
-              <p
-                className="text-xs font-mono tracking-tight mt-0.5"
-                style={{ fontFamily: "'Space Grotesk', monospace", color: "rgba(20, 20, 22, 0.55)" }}
-              >
-                {currentCard.meta}
-              </p>
-            )}
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+
+            {/* Slider Scrubber Track */}
+            <div
+              ref={sliderTrackRef}
+              onPointerDown={onSliderPointerDown}
+              onPointerMove={onSliderPointerMove}
+              onPointerUp={onSliderPointerUp}
+              onPointerCancel={onSliderPointerUp}
+              className="relative flex-1 h-6 flex items-center cursor-pointer group/slider py-1 touch-none"
+              title="Slide or scroll to flip through cards"
+            >
+              {/* Background Track Rail */}
+              <div className="relative w-full h-1.5 rounded-full bg-white/15 overflow-visible">
+                {/* Active Gradient Fill Bar */}
+                <div
+                  ref={sliderFillRef}
+                  className="absolute left-0 top-0 bottom-0 rounded-full bg-gradient-to-r from-[#60c1e5] via-[#a0e0ef] to-[#d4af37] transition-[width] duration-75"
+                  style={{ width: `${cardCount > 1 ? (activeCardIndex / (cardCount - 1)) * 100 : 0}%` }}
+                />
+
+                {/* Card Step Pips (Dots) */}
+                {Array.from({ length: cardCount }, (_, idx) => {
+                  const percent = cardCount > 1 ? (idx / (cardCount - 1)) * 100 : 50;
+                  const isActive = idx === activeCardIndex;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={(e) => goToCard(idx, e)}
+                      aria-label={`Jump to card ${idx + 1}`}
+                      className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full transition-all duration-200 z-10 cursor-pointer"
+                      style={{
+                        left: `${percent}%`,
+                        background: isActive ? "#d4af37" : "rgba(255, 255, 255, 0.35)",
+                        boxShadow: isActive ? "0 0 8px rgba(212, 175, 55, 0.85)" : "none",
+                        transform: isActive ? "translate(-50%, -50%) scale(1.35)" : "translate(-50%, -50%) scale(1)",
+                      }}
+                    />
+                  );
+                })}
+
+                {/* Draggable Glowing Thumb */}
+                <div
+                  ref={sliderThumbRef}
+                  className={`absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-[#d4af37] border-2 border-[#070d18] shadow-[0_0_12px_rgba(212,175,55,0.9)] transition-transform duration-100 z-20 pointer-events-none ${
+                    isDraggingSlider ? "scale-130 ring-2 ring-[#60c1e5]" : "group-hover/slider:scale-115"
+                  }`}
+                  style={{
+                    left: `${cardCount > 1 ? (activeCardIndex / (cardCount - 1)) * 100 : 0}%`,
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Step Next Button */}
+            <button
+              type="button"
+              onClick={nextCard}
+              aria-label="Next card in stack"
+              className="shrink-0 cursor-pointer flex items-center justify-center w-6 h-6 rounded-md bg-white/10 hover:bg-[#60c1e5]/25 active:scale-90 transition-all text-[#60c1e5] hover:text-[#d4af37]"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+
+            {/* Slide Index Badge */}
+            <span className="shrink-0 font-mono text-[10px] font-bold text-[#a0e0ef] px-1.5 py-0.5 rounded bg-black/50 border border-[#60c1e5]/25 whitespace-nowrap">
+              <span className="text-[#d4af37]">{String(activeCardIndex + 1).padStart(2, "0")}</span> / {String(cardCount).padStart(2, "0")}
+            </span>
           </div>
 
-          <div className="flex items-center gap-2 self-end sm:self-auto">
+          {/* ── Row 2: Card Title, Meta & View CTA ── */}
+          <div className="flex items-center justify-between gap-2 pt-1 border-t border-white/10">
+            <div className="flex flex-col min-w-0 pr-2">
+              <h4
+                className="text-xs sm:text-sm font-semibold tracking-tight text-[#f0efea] truncate"
+                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+              >
+                {currentCard.title || currentCard.alt}
+              </h4>
+              {currentCard.meta && (
+                <p
+                  className="text-[10px] sm:text-[11px] font-mono text-[#60c1e5]/80 truncate mt-0.5"
+                >
+                  {currentCard.meta}
+                </p>
+              )}
+            </div>
+
             {currentCard.href && (
               <a
                 href={currentCard.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="px-2.5 py-1 rounded-lg text-[11px] font-medium font-mono inline-flex items-center gap-1 transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95"
-                style={{
-                  background: "linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(226, 226, 230, 0.72) 100%)",
-                  WebkitBackdropFilter: "blur(10px)",
-                  backdropFilter: "blur(10px)",
-                  color: "#111113",
-                  fontWeight: 560,
-                  border: "1px solid rgba(255, 255, 255, 0.5)",
-                  boxShadow: "inset 0 1px 0 #fff, inset 0 -2px 4px rgba(0, 0, 0, 0.04), 0 0 0 0.5px rgba(0, 0, 0, 0.14), 0 4px 10px -4px rgba(0, 0, 0, 0.18)",
-                }}
+                className="shrink-0 px-2.5 py-1 rounded-md text-[11px] font-medium font-mono inline-flex items-center gap-1 bg-[#d4af37] text-[#070d18] hover:bg-[#ffe066] hover:scale-105 active:scale-95 transition-all duration-200 shadow-[0_2px_10px_rgba(212,175,55,0.35)]"
               >
                 <span>View</span>
                 <span className="text-[9px]">↗</span>

@@ -356,6 +356,27 @@ function Work() {
                           {folder.techTags.join("  ·  ")}
                         </span>
                       </div>
+
+                      {/* Interactive Slide Control Bar on Folder Plaque */}
+                      <div className="mt-2.5 pt-2 border-t border-[#60c1e5]/15 flex items-center justify-between gap-2 select-none">
+                        <div className="flex items-center gap-1.5">
+                          <span className={`w-1.5 h-1.5 rounded-full ${isOpen ? "bg-[#d4af37] animate-pulse" : "bg-[#60c1e5]"}`} />
+                          <span className="text-[11px] font-mono text-[#a0e0ef]">
+                            {folder.files?.length || 4} Interactive Builds
+                          </span>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => setOpenFolderId(isOpen ? null : folder.id)}
+                          className="inline-flex items-center gap-1 text-[11px] font-mono text-[#60c1e5] hover:text-[#d4af37] transition-colors cursor-pointer group/slidebtn"
+                        >
+                          <span>{isOpen ? "Slide / Scroll Stack Active" : "Slide Through Stack"}</span>
+                          <span className="text-xs transition-transform duration-200 group-hover/slidebtn:translate-x-0.5">
+                            {isOpen ? "▲" : "▶"}
+                          </span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
