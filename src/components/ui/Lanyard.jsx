@@ -23,7 +23,7 @@ const RING_RADIUS = 0.095;
 const RING_TUBE = 0.0135;
 const EYELET_RADIUS = 0.036;
 const CLAMP_BODY = 0.15;
-const FACE_WIDTH = 1024;
+const FACE_WIDTH = typeof window !== 'undefined' && window.innerWidth < 768 ? 512 : 1024;
 
 const FINISHES = {
   glossy: { roughness: 0.42, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.06, foil: 0, anisotropy: 0 },
@@ -1234,7 +1234,6 @@ const Lanyard = ({
     const onTouchStart = event => {
       if (!settingsRef.current.interactive || event.touches.length !== 1) return;
       toPointer(event.touches[0]);
-      if (pickCard()) event.preventDefault();
     };
 
     canvas.addEventListener('pointerdown', onPointerDown);
@@ -1242,7 +1241,7 @@ const Lanyard = ({
     canvas.addEventListener('pointerup', onPointerUp);
     canvas.addEventListener('pointercancel', onPointerUp);
     canvas.addEventListener('lostpointercapture', onPointerUp);
-    canvas.addEventListener('touchstart', onTouchStart, { passive: false });
+    canvas.addEventListener('touchstart', onTouchStart, { passive: true });
 
     const resize = () => {
       view.width = Math.max(1, container.clientWidth);
@@ -1258,7 +1257,12 @@ const Lanyard = ({
     resizeObserver.observe(container);
     const intersectionObserver = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
-      if (visible) start();
+      if (visible) {
+        start();
+      } else if (raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
     });
     intersectionObserver.observe(container);
     const onVisibility = () => {

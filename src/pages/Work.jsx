@@ -4,7 +4,7 @@ import Footer from "../components/Footer";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import GlassFolder from "../components/ui/glass-folder-cards";
-import SqueezeCarousel from "../components/ui/carousel-squeeze";
+import CarouselCircularImageGallery from "../components/ui/carousel-circular-image-gallery";
 import TechText from "../components/ui/TechText";
 import TextPressure from "../components/ui/TextPressure";
 import SplitFlapText from "../components/ui/SplitFlapText";
@@ -31,11 +31,26 @@ function Work() {
 
   return (
     <div style={{ background: "#070d18", color: "#f0efea", minHeight: "100vh" }} className="relative overflow-hidden selection:bg-[#60c1e5]/30">
-      {/* Ambient Architectural Depth Mesh (Palette: #1b365d, #005a9c, #60c1e5) */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute -top-[15%] left-1/2 -translate-x-1/2 w-[1100px] h-[650px] rounded-full bg-gradient-to-b from-[#1b365d]/25 via-[#005a9c]/15 to-transparent blur-[140px]" />
-        <div className="absolute top-[35%] right-[-15%] w-[850px] h-[550px] rounded-full bg-[#005a9c]/12 blur-[150px]" />
-        <div className="absolute bottom-[5%] left-[-10%] w-[950px] h-[650px] rounded-full bg-[#1b365d]/20 blur-[160px]" />
+      {/* Ambient Architectural Depth Mesh (GPU-optimized radial gradients without memory-killing blur filters) */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+        <div
+          className="absolute -top-[15%] left-1/2 -translate-x-1/2 w-[1100px] h-[650px] rounded-full pointer-events-none opacity-80"
+          style={{
+            background: "radial-gradient(ellipse at center, rgba(27, 54, 93, 0.35) 0%, rgba(0, 90, 156, 0.18) 45%, rgba(7, 13, 24, 0) 70%)",
+          }}
+        />
+        <div
+          className="absolute top-[35%] right-[-15%] w-[850px] h-[550px] rounded-full pointer-events-none opacity-70"
+          style={{
+            background: "radial-gradient(ellipse at center, rgba(0, 90, 156, 0.22) 0%, rgba(7, 13, 24, 0) 70%)",
+          }}
+        />
+        <div
+          className="absolute bottom-[5%] left-[-10%] w-[950px] h-[650px] rounded-full pointer-events-none opacity-75"
+          style={{
+            background: "radial-gradient(ellipse at center, rgba(27, 54, 93, 0.28) 0%, rgba(7, 13, 24, 0) 70%)",
+          }}
+        />
         {/* Subtle fine architectural grid overlay with cyan precision */}
         <div
           className="absolute inset-0 opacity-[0.035]"
@@ -172,13 +187,10 @@ function Work() {
               </p>
             </div>
 
-            <SqueezeCarousel
+            <CarouselCircularImageGallery
               slides={flagshipSlides}
-              theme="dark"
-              height="clamp(260px, 32cqi, 400px)"
-              radius={6}
               autoplay={true}
-              interval={7000}
+              interval={5500}
             />
           </section>
 

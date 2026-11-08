@@ -617,7 +617,8 @@ export default function GlassFolder({
   const [entered, setEntered] = React.useState(!appear)
 
   const k = width / W
-  const density = Math.min(1.5, Math.max(1, typeof window === "undefined" ? 1 : window.devicePixelRatio || 1)) * k
+  const maxDensity = typeof window !== "undefined" && window.innerWidth < 768 ? 1.0 : 1.5
+  const density = Math.min(maxDensity, Math.max(1, typeof window === "undefined" ? 1 : window.devicePixelRatio || 1)) * k
 
   React.useEffect(() => {
     if (!appear) return
