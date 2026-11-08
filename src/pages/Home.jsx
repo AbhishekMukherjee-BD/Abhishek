@@ -254,30 +254,45 @@ function Home() {
       },
     });
 
-    // Image zoom (silky smooth luxury zoom of white container and photo)
-    gsap.to(scalerRef.current, {
-      scale: 1,
-      borderRadius: "0px",
-      scrollTrigger: {
-        trigger: ".photo-text-section",
-        start: "top 80%",
-        end: "center center",
-        scrub: 1.2,
+    // Image zoom: smoothly zoom white container from 0.72 up to 1.0 and corners from 36px to 0px
+    gsap.fromTo(
+      scalerRef.current,
+      {
+        scale: 0.72,
+        borderRadius: "36px",
       },
-      ease: "power2.out",
-    });
+      {
+        scale: 1,
+        borderRadius: "0px",
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".photo-text-section",
+          start: "top 85%",
+          end: "center center",
+          scrub: 1.2,
+          invalidateOnRefresh: true,
+        },
+      }
+    );
 
-    gsap.to(scalerRef2.current, {
-      scale: 1,
-      borderRadius: "0px",
-      scrollTrigger: {
-        trigger: ".photo-text-section",
-        start: "top 80%",
-        end: "75% center",
-        scrub: 1.8,
+    // Inner photo zoom: smoothly expand portrait image from 0.50 up to 1.0 in tandem
+    gsap.fromTo(
+      scalerRef2.current,
+      {
+        scale: 0.50,
       },
-      ease: "power2.out",
-    });
+      {
+        scale: 1,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".photo-text-section",
+          start: "top 85%",
+          end: "75% center",
+          scrub: 1.5,
+          invalidateOnRefresh: true,
+        },
+      }
+    );
 
     // Timeline progress
     gsap.to(timelineRef.current, {
@@ -796,9 +811,9 @@ function Home() {
       <div className="photo-text-section">
         <section className="overflow-hidden whitespace-nowrap" style={{ background: "#0a0a0a", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
           <div
-            className="scroller-image bg-white scale-[0.88] sm:scale-[0.84] md:scale-[0.78] lg:scale-[0.72] overflow-hidden rounded-[28px] sm:rounded-[36px]"
+            className="scroller-image bg-white overflow-hidden"
             ref={scalerRef}
-            style={{ willChange: "transform, border-radius", transform: "translateZ(0)" }}
+            style={{ willChange: "transform, border-radius", transformOrigin: "center center" }}
           >
             <div className="flex w-max py-4" ref={marqueeRef}>
               <MarqueeContent />
@@ -811,8 +826,8 @@ function Home() {
               <img
                 src={pimage}
                 ref={scalerRef2}
-                className="w-full px-4 sm:px-8 md:px-16 lg:px-20 py-6 md:py-8 scale-[0.72] sm:scale-[0.62] md:scale-[0.52] lg:scale-[0.44] origin-center"
-                style={{ willChange: "transform", transform: "translateZ(0)" }}
+                className="w-full px-4 sm:px-8 md:px-16 lg:px-20 py-6 md:py-8"
+                style={{ willChange: "transform", transformOrigin: "center center" }}
                 alt="Abhishek Mukherjee"
               />
             </div>
