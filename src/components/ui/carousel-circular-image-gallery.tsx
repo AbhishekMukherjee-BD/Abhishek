@@ -322,11 +322,11 @@ export default function CarouselCircularImageGallery({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* ── Responsive Luxury Framing Stage (Optimized across Mobile, Foldables, MacBooks & 4K) ── */}
+      {/* ── Responsive Luxury Framing Stage (Strict 16:9 Aspect Ratio on ALL Devices) ── */}
       <div
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        className="relative w-full aspect-[4/3] xs:aspect-[16/10] md:aspect-[16/9] min-h-[360px] sm:min-h-[420px] md:min-h-[460px] lg:min-h-[500px] rounded-2xl sm:rounded-3xl overflow-hidden border border-[#60c1e5]/20 bg-[#050912] shadow-[0_30px_70px_-15px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(160,224,239,0.15)]"
+        className="relative w-full aspect-[16/9] rounded-2xl sm:rounded-3xl overflow-hidden border border-[#60c1e5]/20 bg-[#050912] shadow-[0_30px_70px_-15px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(160,224,239,0.15)]"
       >
         {/* Layer 0: Image Slides with Synchronized Role-Based GSAP Circular Clip Path Reveal */}
         {slides.map((slide, idx) => {
@@ -386,10 +386,10 @@ export default function CarouselCircularImageGallery({
         />
 
         {/* Layer 2: Editorial Meta Overlay (Minimal Top Counter + Bottom Headline & CTA) */}
-        <div className="absolute inset-0 z-20 flex flex-col justify-between p-5 sm:p-8 lg:p-10 pointer-events-none">
+        <div className="absolute inset-0 z-20 flex flex-col justify-between p-3.5 sm:p-6 lg:p-8 pointer-events-none">
           {/* Top Row: Clean Minimal Counter with No Background Box */}
           <div className="flex items-center justify-end w-full">
-            <div className="text-xs sm:text-sm font-mono tracking-widest text-white/40 select-none">
+            <div className="text-[10px] sm:text-xs md:text-sm font-mono tracking-widest text-white/50 select-none">
               <span className="text-white font-bold">{String(active + 1).padStart(2, "0")}</span>
               <span className="mx-1.5 text-white/20">/</span>
               <span className="text-white/40">{String(total).padStart(2, "0")}</span>
@@ -397,10 +397,10 @@ export default function CarouselCircularImageGallery({
           </div>
 
           {/* Bottom Row: Title, Description & Action CTA with Generous Clearance above Tabs */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-8 mt-auto pb-16 sm:pb-20 md:pb-24">
-            <div className="flex-1 min-w-0 pr-2 sm:pr-4">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2.5 sm:gap-6 mt-auto pb-8 sm:pb-14 md:pb-18">
+            <div className="flex-1 min-w-0 pr-1 sm:pr-4">
               <h3
-                className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-white mb-1.5 sm:mb-2 leading-tight"
+                className="text-sm sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-tight text-white mb-0.5 sm:mb-1.5 leading-tight"
                 style={{
                   fontFamily: "'Space Grotesk', sans-serif",
                   textShadow: "0 2px 20px rgba(0,0,0,0.9)",
@@ -409,7 +409,7 @@ export default function CarouselCircularImageGallery({
                 {currentSlide?.title}
               </h3>
               <p
-                className="text-xs sm:text-sm text-white/80 line-clamp-2 leading-relaxed max-w-xl"
+                className="text-[11px] sm:text-xs md:text-sm text-white/80 line-clamp-1 sm:line-clamp-2 leading-relaxed max-w-xl"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 {currentSlide?.description}
@@ -424,9 +424,9 @@ export default function CarouselCircularImageGallery({
                   target="_blank"
                   rel="noopener noreferrer"
                   variant="gold"
-                  size="md"
+                  size="sm"
                   arrowDirection="up-right"
-                  className="shadow-[0_8px_24px_rgba(212,175,55,0.35)]"
+                  className="shadow-[0_8px_24px_rgba(212,175,55,0.35)] text-xs sm:text-sm"
                   style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                 />
               </div>
@@ -435,7 +435,7 @@ export default function CarouselCircularImageGallery({
         </div>
 
         {/* Layer 3: Tactile & High-Contrast Responsive HTML Thumbnail Dock */}
-        <div className="absolute bottom-3 sm:bottom-4 md:bottom-5 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 sm:gap-4 md:gap-5 select-none pointer-events-auto">
+        <div className="absolute bottom-1.5 sm:bottom-3 md:bottom-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5 sm:gap-3 md:gap-4 select-none pointer-events-auto">
           {slides.map((slide, i) => {
             const isActive = active === i;
 
@@ -446,13 +446,13 @@ export default function CarouselCircularImageGallery({
                 onClick={() => goToSlide(i)}
                 disabled={isAnimating}
                 aria-label={`Switch to ${slide.title}`}
-                className="group/tab relative p-1 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer outline-none transition-transform duration-300 active:scale-90 disabled:cursor-default"
+                className="group/tab relative p-0.5 min-w-[32px] min-h-[32px] sm:min-w-[40px] sm:min-h-[40px] flex items-center justify-center cursor-pointer outline-none transition-transform duration-300 active:scale-90 disabled:cursor-default"
               >
                 <div
-                  className={`w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full overflow-hidden transition-all duration-300 ${
+                  className={`w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-full overflow-hidden transition-all duration-300 ${
                     isActive
-                      ? "ring-2.5 ring-[#d4af37] ring-offset-2 ring-offset-[#070d18] shadow-[0_0_18px_rgba(212,175,55,0.85)] scale-105"
-                      : "ring-1.5 ring-white/40 hover:ring-white/90 opacity-70 hover:opacity-100 hover:scale-110"
+                      ? "ring-2 ring-[#d4af37] ring-offset-1 sm:ring-offset-2 ring-offset-[#070d18] shadow-[0_0_18px_rgba(212,175,55,0.85)] scale-105"
+                      : "ring-1 sm:ring-1.5 ring-white/40 hover:ring-white/90 opacity-70 hover:opacity-100 hover:scale-110"
                   }`}
                 >
                   <img
@@ -474,11 +474,11 @@ export default function CarouselCircularImageGallery({
         onClick={prev}
         disabled={isAnimating}
         aria-label="Previous slide"
-        className="cursor-pointer absolute left-2 sm:left-3 md:-left-6 lg:-left-7 top-1/2 -translate-y-1/2 z-35 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-13 md:h-13 rounded-full bg-[#050912]/80 hover:bg-[#0a1220] active:scale-95 transition-all duration-300 border border-white/20 hover:border-[#d4af37]/60 text-white hover:text-[#d4af37] shadow-[0_10px_30px_rgba(0,0,0,0.7)] backdrop-blur-md disabled:opacity-30 disabled:cursor-not-allowed group/arrow"
+        className="cursor-pointer absolute left-1 sm:left-2 md:-left-5 lg:-left-6 top-1/2 -translate-y-1/2 z-35 flex items-center justify-center w-7 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-[#050912]/80 hover:bg-[#0a1220] active:scale-95 transition-all duration-300 border border-white/20 hover:border-[#d4af37]/60 text-white hover:text-[#d4af37] shadow-[0_10px_30px_rgba(0,0,0,0.7)] backdrop-blur-md disabled:opacity-30 disabled:cursor-not-allowed group/arrow"
       >
         <svg
-          width="20"
-          height="20"
+          width="16"
+          height="16"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -497,11 +497,11 @@ export default function CarouselCircularImageGallery({
         onClick={next}
         disabled={isAnimating}
         aria-label="Next slide"
-        className="cursor-pointer absolute right-2 sm:right-3 md:-right-6 lg:-right-7 top-1/2 -translate-y-1/2 z-35 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-13 md:h-13 rounded-full bg-[#050912]/80 hover:bg-[#0a1220] active:scale-95 transition-all duration-300 border border-white/20 hover:border-[#d4af37]/60 text-white hover:text-[#d4af37] shadow-[0_10px_30px_rgba(0,0,0,0.7)] backdrop-blur-md disabled:opacity-30 disabled:cursor-not-allowed group/arrow"
+        className="cursor-pointer absolute right-1 sm:right-2 md:-right-5 lg:-right-6 top-1/2 -translate-y-1/2 z-35 flex items-center justify-center w-7 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-[#050912]/80 hover:bg-[#0a1220] active:scale-95 transition-all duration-300 border border-white/20 hover:border-[#d4af37]/60 text-white hover:text-[#d4af37] shadow-[0_10px_30px_rgba(0,0,0,0.7)] backdrop-blur-md disabled:opacity-30 disabled:cursor-not-allowed group/arrow"
       >
         <svg
-          width="20"
-          height="20"
+          width="16"
+          height="16"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"

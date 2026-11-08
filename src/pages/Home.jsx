@@ -1050,10 +1050,10 @@ function Home() {
           </div>
 
           {/* ── Layer 1: Section Header (z-20) ── */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between px-6 sm:px-8 md:px-16 lg:px-20 pt-8 sm:pt-6 gap-4 z-20 flex-shrink-0">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between px-4 sm:px-8 md:px-16 lg:px-20 pt-4 sm:pt-6 gap-3 sm:gap-4 z-20 flex-shrink-0">
             <div>
               <p
-                className="text-xs uppercase tracking-widest mb-2"
+                className="text-xs uppercase tracking-widest mb-1.5 sm:mb-2"
                 style={{ color: "#90e0ef", fontFamily: "'Inter', sans-serif" }}
               >
                 Recent Projects
@@ -1064,7 +1064,7 @@ function Home() {
                   fontFamily: "'Space Grotesk', sans-serif",
                   fontWeight: 700,
                   letterSpacing: "-0.03em",
-                  fontSize: "clamp(2rem, 4.5vw, 3.6rem)",
+                  fontSize: "clamp(1.75rem, 4.5vw, 3.6rem)",
                   color: "#ffffff",
                   textShadow: "0 2px 16px rgba(3,4,94,0.8)",
                 }}
@@ -1084,7 +1084,7 @@ function Home() {
           </div>
 
           {/* ── Layer 2: 3D WorksWheel Stage (z-10, transparent background so ASCII gradient shines through) ── */}
-          <div className="w-full flex-1 min-h-0 relative z-10 px-4 sm:px-8 md:px-12 pb-3">
+          <div className="w-full flex-1 min-h-0 relative z-10 px-2 sm:px-8 md:px-12 pb-3">
             <WorksWheel
               ref={worksWheelRef}
               items={wheelProjects}

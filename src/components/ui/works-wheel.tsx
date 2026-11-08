@@ -556,6 +556,29 @@ export const WorksWheel = React.forwardRef<WorksWheelRef, WorksWheelProps>(
           {items[active]?.title}
         </div>
 
+        {/* Mobile Active Project Callout Badge (Visible on Android & iOS Viewports) */}
+        <div
+          className="sm:hidden pointer-events-none absolute bottom-2 left-0 right-0 px-4 flex flex-col items-center text-center select-none z-25 transition-all duration-300"
+          style={{
+            opacity: active >= 0 ? 1 : 0,
+          }}
+        >
+          <div className="px-3.5 py-1.5 rounded-full bg-black/85 backdrop-blur-md border border-white/20 shadow-xl flex items-center gap-2 max-w-[92%]">
+            <span
+              className="text-[9px] uppercase tracking-wider font-mono font-bold px-1.5 py-0.5 rounded-full shrink-0"
+              style={{ background: "#d4ff00", color: "#0a0a0a" }}
+            >
+              {items[active]?.category || "Project"}
+            </span>
+            <span
+              className="text-xs font-bold text-white tracking-tight truncate"
+              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+            >
+              {items[active]?.title}
+            </span>
+          </div>
+        </div>
+
         {/* Index list down the right-hand side */}
         <ol
           className={cn(

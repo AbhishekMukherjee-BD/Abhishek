@@ -21,6 +21,24 @@ function Work() {
   const headingRef = useRef(null);
   const deskRef = useRef(null);
   const [openFolderId, setOpenFolderId] = useState(null);
+  const [folderWidth, setFolderWidth] = useState(330);
+
+  // Responsive folder width calculation for Android, Foldables and iOS viewports
+  useEffect(() => {
+    const updateWidth = () => {
+      const w = window.innerWidth;
+      if (w < 380) {
+        setFolderWidth(Math.max(260, w - 56));
+      } else if (w < 480) {
+        setFolderWidth(300);
+      } else {
+        setFolderWidth(330);
+      }
+    };
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
 
   useEffect(() => {
     gsap.fromTo(
@@ -65,9 +83,9 @@ function Work() {
       <div className="relative z-10">
         <Nav />
 
-        {/* ── 3D Interactive Lanyard ID Card hanging from top:0 directly under Menu button, overlapping carousel ── */}
+        {/* ── 3D Interactive Lanyard ID Card hanging from top:0 directly under Menu button (Desktop/Tablet Showcase, Hidden on Mobile to Prevent Touch Scroll Hijacking) ── */}
         <div
-          className="absolute top-0 right-0 sm:right-2 lg:right-4 w-[220px] sm:w-[320px] md:w-[400px] lg:w-[440px] h-[520px] sm:h-[680px] lg:h-[785px] pointer-events-none z-[120]"
+          className="hidden md:block absolute top-0 right-2 lg:right-4 w-[340px] lg:w-[440px] h-[640px] lg:h-[785px] pointer-events-none z-[120]"
           aria-hidden="true"
         >
           <div className="w-full h-full pointer-events-auto">
@@ -95,7 +113,7 @@ function Work() {
           </div>
         </div>
 
-        <main className="px-6 sm:px-10 lg:px-16 py-16 max-w-[1400px] mx-auto">
+        <main className="px-4 sm:px-10 lg:px-16 py-12 sm:py-16 max-w-[1400px] mx-auto">
           {/* Editorial Heading: Interactive Vector Blueprint TechText */}
           <div ref={headingRef} className="relative w-full max-w-2xl h-[130px] sm:h-[170px] lg:h-[200px] pt-2 mb-2">
             <h1 className="sr-only">My Work</h1>
@@ -241,7 +259,7 @@ function Work() {
             <div
               id="work-library"
               ref={deskRef}
-              className={`relative rounded-3xl p-6 sm:p-10 lg:p-12 transition-all duration-300 ${
+              className={`relative rounded-3xl p-4 sm:p-8 lg:p-12 transition-all duration-300 ${
                 openFolderId ? "overflow-visible" : "overflow-hidden"
               }`}
               style={{
@@ -283,7 +301,7 @@ function Work() {
                         action="more"
                         appear={true}
                         appearDelay={folder.appearDelay}
-                        width={330}
+                        width={folderWidth}
                         files={folder.files}
                         open={isOpen}
                         onOpenChange={(next) => setOpenFolderId(next ? folder.id : null)}
