@@ -438,6 +438,8 @@ export const WorksWheel = React.forwardRef<WorksWheelRef, WorksWheelProps>(
                       <img
                         src={item.image}
                         alt={item.title}
+                        loading={i < 2 ? "eager" : "lazy"}
+                        decoding="async"
                         draggable={false}
                         className="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                       />
