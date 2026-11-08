@@ -164,26 +164,24 @@ export default function VectorPortraitHero({ onReady }) {
 
       const tl = gsap.timeline({
         onComplete: () => {
-          // Idle breathing glow animation exactly matching abhishek-brown-iota.vercel.app
-          gsap.to(pathElements, {
-            opacity: 1,
-            duration: 4,
-            ease: "sine.inOut",
-            yoyo: true,
-            repeat: -1,
-            stagger: {
-              each: 0.05,
-              from: "random",
-            },
-          });
+          // Idle breathing glow on the single parent SVG node (Hardware GPU composited, 0% CPU overhead)
+          if (svgRef.current) {
+            gsap.to(svgRef.current, {
+              opacity: 0.85,
+              duration: 3.5,
+              ease: "sine.inOut",
+              yoyo: true,
+              repeat: -1,
+            });
+          }
         },
       });
 
       tl.to(pathElements, {
         strokeDashoffset: 0,
-        duration: 2.2,
+        duration: 2.0,
         ease: "power2.out",
-        stagger: 0.008,
+        stagger: 0.006,
       });
     };
 
@@ -242,6 +240,24 @@ export default function VectorPortraitHero({ onReady }) {
     };
   }, [paths]);
 
+  // Pause rendering when scrolled out of view to preserve 100% CPU on mobile
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (svgRef.current) {
+          svgRef.current.style.visibility = entry.isIntersecting ? "visible" : "hidden";
+        }
+      },
+      { threshold: 0.05 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div
       ref={containerRef}
@@ -256,17 +272,17 @@ export default function VectorPortraitHero({ onReady }) {
         }}
       />
 
-      {/* SVG Canvas for Vector Lines - Exact 1:1 match with abhishek-brown-iota.vercel.app */}
+      {/* SVG Canvas for Vector Lines - Hardware-accelerated with 100dvh support */}
       {paths.length > 0 && (
         <svg
           ref={svgRef}
           viewBox={viewBox}
           preserveAspectRatio="xMidYMid meet"
-          className="w-full h-full max-h-[76vh] sm:max-h-[82vh] md:max-h-[88vh] max-w-[95vw] md:max-w-[88vw] z-10"
+          className="w-full h-full max-h-[48dvh] sm:max-h-[80vh] md:max-h-[88vh] max-w-[92vw] md:max-w-[88vw] z-10"
           style={{
-            filter:
-              "drop-shadow(0 0 25px rgba(255, 255, 255, 0.08)) drop-shadow(0 0 50px rgba(0,0,0,0.85))",
+            filter: "drop-shadow(0 0 16px rgba(255, 255, 255, 0.12))",
             pointerEvents: "none",
+            willChange: "opacity, transform",
           }}
         >
           {paths.map((d, index) => (

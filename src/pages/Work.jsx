@@ -51,7 +51,7 @@ function Work() {
 
         {/* ── 3D Interactive Lanyard ID Card hanging from top:0 directly under Menu button, overlapping carousel ── */}
         <div
-          className="absolute top-0 right-0 sm:right-2 lg:right-4 w-[340px] sm:w-[400px] lg:w-[440px] h-[720px] sm:h-[760px] lg:h-[785px] pointer-events-none z-[120]"
+          className="absolute top-0 right-0 sm:right-2 lg:right-4 w-[220px] sm:w-[320px] md:w-[400px] lg:w-[440px] h-[520px] sm:h-[680px] lg:h-[785px] pointer-events-none z-[120]"
           aria-hidden="true"
         >
           <div className="w-full h-full pointer-events-auto">

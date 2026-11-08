@@ -215,17 +215,18 @@ function Home() {
 
   useLayoutEffect(() => {
     // Arc animation (signature black circle dome scrolling up)
+    const isMobileArc = typeof window !== "undefined" && window.innerWidth < 768;
     gsap.to(pathRef.current, {
       borderRadius: "50% 50% 0 0",
-      scale: 2.8,
-      y: -50,
+      scale: isMobileArc ? 1.7 : 2.8,
+      y: isMobileArc ? -28 : -50,
       scrollTrigger: {
         trigger: ".arch-section",
         start: "-2% 95%",
         end: "40% bottom",
-        scrub: 2,
+        scrub: 1.5,
       },
-      ease: "power3.out",
+      ease: "power2.out",
     });
 
     // Text reveal
@@ -346,9 +347,12 @@ function Home() {
   useLayoutEffect(() => {
     if (!wheelSectionRef.current || !wheelStickyRef.current) return;
 
-    // Pin distance: ~500px per project slide for comfortable reading time
+    // Pin distance: mobile uses a calibrated ~380px per item so touch scrolling feels fluid and natural
     const totalItems = wheelProjects.length;
-    const pinDistance = Math.max(window.innerHeight * 4.2, totalItems * 500);
+    const isMobileWheel = typeof window !== "undefined" && window.innerWidth < 768;
+    const pinDistance = isMobileWheel
+      ? totalItems * 380
+      : Math.max(window.innerHeight * 4.2, totalItems * 500);
 
     const trigger = ScrollTrigger.create({
       trigger: wheelSectionRef.current,
@@ -609,7 +613,7 @@ function Home() {
       {/* ===== SECTION 1: HERO PORTRAIT LANDING (Exact 1:1 match with abhishek-brown-iota.vercel.app) ===== */}
       <section
         id="hero-section"
-        className="hero-section w-full h-screen relative flex items-center justify-center overflow-hidden bg-[#050505]"
+        className="hero-section w-full h-screen h-[100dvh] min-h-[100dvh] relative flex items-center justify-center overflow-hidden bg-[#050505]"
       >
         {/* Radial Depth Overlay */}
         <div
@@ -704,7 +708,7 @@ function Home() {
       </section>
 
       {/* ===== ABOUT ARCH SECTION ===== */}
-      <div className="arch-section about-section relative overflow-x-clip z-20" style={{ background: "#0a0a0a" }}>
+      <div className="arch-section about-section relative overflow-hidden z-20" style={{ background: "#0a0a0a" }}>
         <div className="arc-compo w-full top-0 rounded-full z-20 relative" ref={pathRef}>
           <div
             className="arc h-[60px] sm:h-[80px] md:h-[100px] mb-8 w-full rounded-full z-20"
@@ -1018,7 +1022,7 @@ function Home() {
       >
         <div
           ref={wheelStickyRef}
-          className="w-full h-screen relative overflow-hidden flex flex-col justify-between"
+          className="w-full h-screen h-[100dvh] min-h-[100dvh] relative overflow-hidden flex flex-col justify-between"
         >
           {/* ── Layer 0: Full-Bleed Live GradientASCII Background (Behind Everything) ── */}
           <div className="absolute inset-0 z-0 pointer-events-none">

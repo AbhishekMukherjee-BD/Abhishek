@@ -245,9 +245,11 @@ export const WorksWheel = React.forwardRef<WorksWheelRef, WorksWheelProps>(
     React.useEffect(() => {
       if (!stage.h) return;
       let frame = 0;
+      let isVisible = true;
       const { ringR, ringScale, drumR, bow } = metrics;
 
       const draw = () => {
+        if (!isVisible) return;
         frame = requestAnimationFrame(draw);
         const gap = target.current - turn.current;
         if (Math.abs(gap) < 0.0005) turn.current = target.current;
@@ -319,8 +321,27 @@ export const WorksWheel = React.forwardRef<WorksWheelRef, WorksWheelProps>(
         }
       };
 
+      const el = stageRef.current;
+      const observer = el && typeof IntersectionObserver !== "undefined"
+        ? new IntersectionObserver(
+            ([entry]) => {
+              const prev = isVisible;
+              isVisible = entry.isIntersecting;
+              if (isVisible && !prev) {
+                frame = requestAnimationFrame(draw);
+              }
+            },
+            { threshold: 0.01 }
+          )
+        : null;
+
+      if (el && observer) observer.observe(el);
+
       frame = requestAnimationFrame(draw);
-      return () => cancelAnimationFrame(frame);
+      return () => {
+        cancelAnimationFrame(frame);
+        if (observer) observer.disconnect();
+      };
     }, [metrics, stage.h, count, last, reduced, scrollPinned]);
 
     // Native listener for unpinned mode. When scrollPinned is active, page scroll drives the wheel.

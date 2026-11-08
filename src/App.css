@@ -21,6 +21,8 @@
 html {
   scroll-behavior: auto; /* Lenis handles this */
   background-color: #050505;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -28,6 +30,9 @@ body {
   font-family: var(--font-primary);
   color: #f0efea;
   overflow-x: hidden;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -434,10 +439,13 @@ body {
   }
 }
 
-/* Mobile & Tablet Responsive Optimizations (Exact match with abhishek-brown-iota.vercel.app) */
+/* Mobile & Tablet Responsive Optimizations (Unified 1:1 cross-platform for Android & iOS) */
 @media (max-width: 768px) {
   .hero-content-overlay {
-    padding: 24px 18px;
+    padding: calc(env(safe-area-inset-top, 0px) + 20px) 18px calc(env(safe-area-inset-bottom, 0px) + 22px) 18px;
+    height: 100%;
+    max-height: 100dvh;
+    box-sizing: border-box;
   }
 
   .hero-header {
@@ -450,8 +458,9 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 14px;
+    gap: 10px;
     width: 100%;
+    margin-top: auto;
   }
 
   .hero-title-group-editorial {
@@ -461,36 +470,47 @@ body {
   }
 
   .hero-name-editorial {
-    font-size: clamp(2.1rem, 7.5vw, 3.2rem);
-    margin-bottom: 6px;
+    font-size: clamp(1.65rem, 6.4vw, 2.7rem);
+    line-height: 1.1;
+    margin-bottom: 4px;
+    letter-spacing: 0.03em;
   }
 
   .hero-subtitle-editorial {
-    font-size: 0.72rem;
-    letter-spacing: 0.16em;
+    font-size: clamp(0.68rem, 2.3vw, 0.78rem);
+    letter-spacing: 0.14em;
+    line-height: 1.4;
   }
 
   .hero-contact-editorial {
     text-align: center;
-    font-size: 0.75rem;
-    line-height: 1.8;
+    font-size: 0.74rem;
+    line-height: 1.65;
     order: 2;
+    margin-top: 4px;
   }
 
   .hero-container svg {
-    max-height: 52vh !important;
-    max-width: 85vw !important;
+    max-height: 46dvh !important;
+    max-height: 46vh !important;
+    max-width: 88vw !important;
+    object-fit: contain;
   }
 }
 
 /* Small Foldables & Compact Mobile (max-width: 480px) */
 @media (max-width: 480px) {
   .hero-name-editorial {
-    font-size: 1.95rem;
+    font-size: clamp(1.5rem, 5.8vw, 1.95rem);
   }
 
   .hero-tagline-editorial {
     font-size: 0.65rem;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.20em;
+  }
+
+  .hero-subtitle-editorial {
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
   }
 }

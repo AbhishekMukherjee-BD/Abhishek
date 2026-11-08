@@ -734,7 +734,8 @@ const GradientASCII = forwardRef(({
       const s = settingsRef.current;
       view.width = Math.max(1, container.clientWidth);
       view.height = Math.max(1, container.clientHeight);
-      view.ratio = Math.min(s.dpr || window.devicePixelRatio || 1, 2);
+      const maxDpr = typeof window !== 'undefined' && window.innerWidth < 768 ? 1.4 : 2;
+      view.ratio = Math.min(s.dpr || window.devicePixelRatio || 1, maxDpr);
       canvas.width = Math.max(1, Math.round(view.width * view.ratio));
       canvas.height = Math.max(1, Math.round(view.height * view.ratio));
       sizeTarget(
