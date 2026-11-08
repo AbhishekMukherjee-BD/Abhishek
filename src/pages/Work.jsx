@@ -11,6 +11,7 @@ import SplitFlapText from "../components/ui/SplitFlapText";
 import DecryptedText from "../components/ui/DecryptedText";
 import CurvedLoop from "../components/ui/CurvedLoop";
 import Lanyard from "../components/ui/Lanyard";
+import ArrowFillButton from "../components/ui/arrow-fill-button";
 import { categoryFolders } from "../data/glassFolderData";
 import { flagshipSlides } from "../data/workFlagshipSlides";
 
@@ -366,16 +367,13 @@ function Work() {
                           </span>
                         </div>
 
-                        <button
-                          type="button"
+                        <ArrowFillButton
+                          btnText={isOpen ? "Slide Deck Active" : "Slide Through Stack"}
                           onClick={() => setOpenFolderId(isOpen ? null : folder.id)}
-                          className="inline-flex items-center gap-1 text-[11px] font-mono text-white hover:text-white/80 transition-colors cursor-pointer group/slidebtn"
-                        >
-                          <span>{isOpen ? "Slide / Scroll Stack Active" : "Slide Through Stack"}</span>
-                          <span className="text-xs transition-transform duration-200 group-hover/slidebtn:translate-x-0.5">
-                            {isOpen ? "▲" : "▶"}
-                          </span>
-                        </button>
+                          variant="white"
+                          size="xs"
+                          arrowDirection="right"
+                        />
                       </div>
                     </div>
                   </div>

@@ -7,6 +7,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import ArrowFillButton from "./arrow-fill-button";
 
 export interface TumbleCardItem {
   src: string;
@@ -700,16 +701,17 @@ export default function TumbleDeckShowcase({
             </div>
 
             {currentCard.href && (
-              <a
+              <ArrowFillButton
+                btnText="View"
                 href={currentCard.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="shrink-0 px-2.5 py-1 rounded-md text-[11px] font-bold font-mono inline-flex items-center gap-1 bg-white text-black hover:bg-white/90 hover:scale-105 active:scale-95 transition-all duration-200 shadow-[0_2px_12px_rgba(255,255,255,0.3)]"
-              >
-                <span>View</span>
-                <span className="text-[9px]">↗</span>
-              </a>
+                variant="white"
+                size="xs"
+                arrowDirection="up-right"
+                className="shrink-0 font-bold"
+              />
             )}
           </div>
         </div>

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import gsap from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
+import ArrowFillButton from "./arrow-fill-button";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(MotionPathPlugin);
@@ -368,16 +369,17 @@ export default function CarouselCircularImageGallery({
             </div>
 
             {currentSlide?.href && (
-              <a
+              <ArrowFillButton
+                btnText={currentSlide.actionText || "View Live Site"}
                 href={currentSlide.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="pointer-events-auto self-start sm:self-auto inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold tracking-wide bg-[#d4af37] text-[#070d18] hover:bg-[#ffe066] hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_8px_24px_rgba(212,175,55,0.35)]"
+                variant="gold"
+                size="md"
+                arrowDirection="up-right"
+                className="pointer-events-auto self-start sm:self-auto shadow-[0_8px_24px_rgba(212,175,55,0.35)]"
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-              >
-                <span>{currentSlide.actionText || "View Live Site"}</span>
-                <i className="bi bi-arrow-up-right text-xs" />
-              </a>
+              />
             )}
           </div>
         </div>
