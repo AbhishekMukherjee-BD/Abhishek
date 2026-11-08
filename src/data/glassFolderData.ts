@@ -181,7 +181,7 @@ export const categoryFolders: CategoryFolder[] = [
     tone: "dark",
     art: "dusk",
     seed: 7,
-    meta: "5 Live Experiences",
+    meta: "4 Live Experiences",
     appearDelay: 480,
     files: [
       {
@@ -189,12 +189,6 @@ export const categoryFolders: CategoryFolder[] = [
         meta: "Continental Dining · Brand Showcase",
         image: "/work/03-work-library/03-restaurants-dining/01-asp-kitchen-dining.webp",
         href: "https://asp-cafe.vercel.app",
-      },
-      {
-        name: "California Medical Clinic",
-        meta: "Healthcare & Telehealth · Patient Portal",
-        image: "/work/03-work-library/03-restaurants-dining/02-california-medical-clinic.webp",
-        href: "https://california-medical-clinic.vercel.app",
       },
       {
         name: "ASP Kitchen Continental Menu",

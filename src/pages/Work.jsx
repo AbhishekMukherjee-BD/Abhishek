@@ -191,7 +191,7 @@ function Work() {
             <CarouselCircularImageGallery
               slides={flagshipSlides}
               autoplay={true}
-              interval={5500}
+              interval={4500}
             />
           </section>
 
