@@ -59,4 +59,13 @@ export const flagshipSlides: FlagshipSlideItem[] = [
     actionText: "View Catalog",
     href: "https://ssrinihandcraftecom.vercel.app/ecom/",
   },
+  {
+    id: "rolex-submariner-experience",
+    title: "Rolex Submariner Experience",
+    category: "3D WebGL & Experience",
+    description: "High-precision 3D interactive luxury horology showcase featuring real-time WebGL materials and bespoke micro-interactions.",
+    image: "/work/02-work-carousel/04-rolex-submariner.png",
+    actionText: "View Live Site",
+    href: "https://rolex-submariner-experience-ecru.vercel.app/",
+  },
 ];
