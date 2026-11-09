@@ -214,20 +214,22 @@ function Home() {
   }, []);
 
   useLayoutEffect(() => {
-    // Arc animation (signature black circle dome scrolling up)
-    const isMobileArc = typeof window !== "undefined" && window.innerWidth < 768;
-    gsap.to(pathRef.current, {
-      borderRadius: "50% 50% 0 0",
-      scale: isMobileArc ? 1.7 : 2.8,
-      y: isMobileArc ? -28 : -50,
-      scrollTrigger: {
-        trigger: ".arch-section",
-        start: "-2% 95%",
-        end: "40% bottom",
-        scrub: 1.5,
-      },
-      ease: "power2.out",
-    });
+    // Arc animation (signature green ring dome elevation as it scrolls up from the landing page)
+    gsap.fromTo(
+      pathRef.current,
+      { y: 24, scaleY: 0.82 },
+      {
+        y: 0,
+        scaleY: 1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".arch-section",
+          start: "top bottom",
+          end: "top 60%",
+          scrub: 1.2,
+        },
+      }
+    );
 
     // Text reveal
     const chars = textAnimationRef.current.querySelectorAll("span > span");
@@ -708,55 +710,63 @@ function Home() {
       </section>
 
       {/* ===== ABOUT ARCH SECTION ===== */}
-      <div className="arch-section about-section relative overflow-hidden z-20" style={{ background: "#0a0a0a" }}>
-        <div className="arc-compo w-full top-0 rounded-full z-20 relative" ref={pathRef}>
-          <div
-            className="arc h-[60px] sm:h-[80px] md:h-[100px] mb-8 w-full rounded-full z-20"
-            style={{ background: "#0a0a0a", clipPath: "ellipse(30% 100% at 50% 100%)" }}
-          />
-
-          {/* Slim Outer Ring in #d4ff00 (Matches "About Me" button color):
-              Starts slim at the edges and tapers smoothly down to 0 at the center apex */}
+      <div className="arch-section about-section relative overflow-visible z-20" style={{ background: "#0a0a0a" }}>
+        {/* Signature Glowing Green Ring Arch Dome crowning the top of the About section */}
+        <div
+          ref={pathRef}
+          className="arc-compo relative w-full h-[60px] sm:h-[90px] md:h-[120px] -mt-[58px] sm:-mt-[88px] md:-mt-[118px] pointer-events-none z-30 overflow-visible"
+        >
           <svg
-            viewBox="0 0 1000 100"
+            viewBox="0 0 1440 120"
             preserveAspectRatio="none"
-            className="absolute top-0 left-0 w-full h-[60px] sm:h-[80px] md:h-[100px] pointer-events-none z-30 overflow-visible"
+            className="w-full h-full block overflow-visible"
           >
             <defs>
+              {/* Luminous Neon Green Glow Gradient: Bright and striking at the center peak, tapering smoothly at edges */}
               <linearGradient id="arcRimGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#d4ff00" stopOpacity="0.85" />
-                <stop offset="22%" stopColor="#d4ff00" stopOpacity="0.6" />
-                <stop offset="38%" stopColor="#d4ff00" stopOpacity="0.25" />
-                <stop offset="47%" stopColor="#d4ff00" stopOpacity="0" />
-                <stop offset="53%" stopColor="#d4ff00" stopOpacity="0" />
-                <stop offset="62%" stopColor="#d4ff00" stopOpacity="0.25" />
-                <stop offset="78%" stopColor="#d4ff00" stopOpacity="0.6" />
-                <stop offset="100%" stopColor="#d4ff00" stopOpacity="0.85" />
+                <stop offset="0%" stopColor="#d4ff00" stopOpacity="0.25" />
+                <stop offset="18%" stopColor="#d4ff00" stopOpacity="0.75" />
+                <stop offset="50%" stopColor="#d4ff00" stopOpacity="1" />
+                <stop offset="82%" stopColor="#d4ff00" stopOpacity="0.75" />
+                <stop offset="100%" stopColor="#d4ff00" stopOpacity="0.25" />
               </linearGradient>
-              <filter id="arcGlow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="1.5" result="blur" />
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+
+              {/* Multi-stage Neon Aura Filter */}
+              <filter id="arcGlow" x="-20%" y="-40%" width="140%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur1" />
+                <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur2" />
+                <feMerge>
+                  <feMergeNode in="blur2" />
+                  <feMergeNode in="blur1" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
               </filter>
             </defs>
 
-            {/* Left curved wing reaching center peak */}
+            {/* Solid #0a0a0a black dome fill beneath the curve, merging seamlessly into the About section body */}
             <path
-              d="M 200 100 A 300 100 0 0 1 500 0"
+              d="M 0 120 Q 720 0 1440 120 L 1440 120 L 0 120 Z"
+              fill="#0a0a0a"
+            />
+
+            {/* Glowing neon green ring aura */}
+            <path
+              d="M 0 120 Q 720 0 1440 120"
               fill="none"
               stroke="url(#arcRimGradient)"
-              strokeWidth="1.6"
+              strokeWidth="4"
               strokeLinecap="round"
               filter="url(#arcGlow)"
             />
 
-            {/* Right curved wing descending from center peak */}
+            {/* Sharp core neon line */}
             <path
-              d="M 500 0 A 300 100 0 0 1 800 100"
+              d="M 0 120 Q 720 0 1440 120"
               fill="none"
-              stroke="url(#arcRimGradient)"
+              stroke="#d4ff00"
               strokeWidth="1.6"
               strokeLinecap="round"
-              filter="url(#arcGlow)"
+              strokeOpacity="0.95"
             />
           </svg>
         </div>
