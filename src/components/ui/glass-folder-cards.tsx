@@ -1012,6 +1012,21 @@ const GF_CSS = `
 .gf-root:hover, .gf-root:focus-within { --gf-hinge: -11deg; --gf-lift: -40px; --gf-spread: 8px; --gf-fan: 1.4deg; --gf-stack: 10px; }
 .gf-root[data-open] { --gf-hinge: -24deg; --gf-lift: -96px; --gf-spread: 40px; --gf-fan: 5deg; --gf-stack: 30px; }
 
+/* ── Mobile Touch Affordance: Tactile Inner Card Peek for Touch / Small Viewports (9:16 Portrait) ── */
+@media (hover: none), (max-width: 768px) {
+  .gf-root:not([data-open]) {
+    --gf-hinge: -8deg;
+    --gf-lift: -28px;
+    --gf-spread: 6px;
+    --gf-fan: 1deg;
+    --gf-stack: 8px;
+  }
+  .gf-root:active:not([data-open]) {
+    --gf-hinge: -14deg;
+    --gf-lift: -46px;
+  }
+}
+
 /* ── Unified Single-Motion Physical Emergence for Tumble Deck ── */
 @keyframes gf-tumble-emerge {
   0% {

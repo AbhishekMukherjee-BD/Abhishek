@@ -1203,7 +1203,9 @@ const Lanyard = ({
       press = { x: event.clientX, y: event.clientY, time: performance.now(), point: hit.point.clone() };
       canvas.setPointerCapture?.(event.pointerId);
       setCursor('grabbing');
-      event.preventDefault();
+      if (event.pointerType !== 'touch') {
+        event.preventDefault();
+      }
       start();
     };
 

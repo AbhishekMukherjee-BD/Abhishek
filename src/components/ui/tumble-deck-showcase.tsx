@@ -418,19 +418,20 @@ export default function TumbleDeckShowcase({
     const root = rootRef.current;
     if (!root || cardCount === 0) return;
 
-    // Wheel listener (Existing Scroll Interaction Preserved)
+    // Wheel listener (Existing Scroll Interaction Preserved, Inverted for Natural Human Intuition)
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       e.stopPropagation();
       const delta =
         Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      const normalizedDelta = (delta / scrollPerCard) * 0.85;
+      // Inverting delta direction so scrolling down brings card forward/down
+      const normalizedDelta = (-delta / scrollPerCard) * 0.85;
 
       pushTarget(posRef.current.target + normalizedDelta);
 
       clearTimeout(settleTimerRef.current);
       settleTimerRef.current = setTimeout(() => {
-        settleToNearest(Math.sign(delta));
+        settleToNearest(Math.sign(-delta));
       }, 160);
     };
 
@@ -452,7 +453,8 @@ export default function TumbleDeckShowcase({
 
     const onPointerMove = (e: PointerEvent) => {
       if (!pointerState || e.pointerId !== pointerState.id) return;
-      const deltaY = pointerState.y - e.clientY;
+      // Pulling downward increases deltaY, which advances card forward/down
+      const deltaY = e.clientY - pointerState.y;
       pointerState.y = e.clientY;
       pointerState.travel += Math.abs(deltaY);
 

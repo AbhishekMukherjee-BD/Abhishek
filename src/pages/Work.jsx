@@ -83,9 +83,9 @@ function Work() {
       <div className="relative z-10">
         <Nav />
 
-        {/* ── 3D Interactive Lanyard ID Card hanging from top:0 directly under Menu button (Desktop/Tablet Showcase, Hidden on Mobile to Prevent Touch Scroll Hijacking) ── */}
+        {/* ── 3D Interactive Lanyard ID Card hanging from top:0 directly under Menu button (Optimized for Mobile, Tablet & Desktop) ── */}
         <div
-          className="hidden md:block absolute top-0 right-2 lg:right-4 w-[340px] lg:w-[440px] h-[640px] lg:h-[785px] pointer-events-none z-[120]"
+          className="block absolute top-0 right-0 sm:right-2 lg:right-4 w-[130px] sm:w-[200px] md:w-[340px] lg:w-[440px] h-[300px] sm:h-[440px] md:h-[640px] lg:h-[785px] pointer-events-none z-[120]"
           aria-hidden="true"
         >
           <div className="w-full h-full pointer-events-auto">
@@ -239,15 +239,15 @@ function Work() {
 
             <div className="flex flex-col items-center text-center max-w-2xl mx-auto mb-10 sm:mb-12">
               <h2 className="sr-only">Work Library - Launch Ready</h2>
-              <div className="w-full flex justify-center py-2 overflow-x-auto">
+              <div className="w-full flex justify-center py-2 overflow-hidden max-w-full">
                 <SplitFlapText
                   words={['WORK LIBRARY', 'LAUNCH READY']}
                   padTo={12}
-                  fontSize={32}
+                  fontSize="clamp(15px, 4.2vw, 30px)"
                   tileColor="#0a1220"
                   textColor="#f8fafc"
-                  tileRadius={6}
-                  gap={5}
+                  tileRadius={4}
+                  gap="clamp(2px, 0.75vw, 5px)"
                   flipsPerChar={6}
                   cycleDelay={2800}
                   align="center"

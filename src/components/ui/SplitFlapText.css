@@ -12,6 +12,8 @@
   white-space: pre;
   user-select: none;
   font-variant-numeric: tabular-nums;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .split-flap-text__sr {
